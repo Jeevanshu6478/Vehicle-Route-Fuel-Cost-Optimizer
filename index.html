@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimizer Pro</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Your Custom CSS File -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="fas fa-route text-success"></i> OptimizerPro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#">Optimization Tool</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About the Algorithm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact Team</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container custom-container">
+        <div class="row g-4">
+            
+            <!-- Left Column: Inputs -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary"><i class="fas fa-map-marker-alt"></i> 1. Add Waypoint</h5>
+                        <hr>
+                        <div class="mb-3">
+                            <input type="text" id="stop-name" class="form-control mb-2" placeholder="Location Name (e.g., Campus)">
+                            <div class="input-group">
+                                <input type="number" id="stop-lat" class="form-control" placeholder="Latitude" step="any">
+                                <input type="number" id="stop-lng" class="form-control" placeholder="Longitude" step="any">
+                            </div>
+                        </div>
+                        <button id="add-stop-btn" class="btn btn-primary w-100 fw-bold">Add to Route</button>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary"><i class="fas fa-gas-pump"></i> 2. Fuel Parameters</h5>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small text-muted">Efficiency (km/L)</label>
+                                <input type="number" id="fuel-efficiency" class="form-control" value="15">
+                            </div>
+                            <div class="col">
+                                <label class="form-label small text-muted">Price (₹/L)</label>
+                                <input type="number" id="fuel-price" class="form-control" value="102">
+                            </div>
+                        </div>
+                        <button id="optimize-btn" class="btn btn-success w-100 fw-bold py-2"><i class="fas fa-cogs"></i> Run Optimization</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title text-primary m-0"><i class="fas fa-list-ol"></i> Current Stops</h5>
+                            <button id="clear-btn" class="btn btn-sm btn-outline-danger">Clear All</button>
+                        </div>
+                        <ul id="stops-list" class="list-group list-group-flush border-top">
+                            <!-- JS injects stops here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 bg-light border-start border-success border-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-success"><i class="fas fa-flag-checkered"></i> Output</h5>
+                        <hr>
+                        <div id="results-container" class="text-center text-muted p-3">
+                            Enter an origin and destination to calculate.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
