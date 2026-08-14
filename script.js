@@ -1,5 +1,5 @@
 let stops = JSON.parse(localStorage.getItem('routeStops')) || [];
-let cityData = []; // Array to hold the parsed Kaggle dataset
+let cityData = []; 
 
 const DOM = {
     search: document.getElementById('city-search'),
@@ -10,43 +10,52 @@ const DOM = {
     price: document.getElementById('fuel-price')
 };
 
-// 1. Fetch and Parse the Kaggle CSV
+// --- MAP INITIALIZATION ---
+let map = L.map('map').setView([20.5937, 78.9629], 5); // Centers on India
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let markers = []; 
+let routeLayer = null; 
+
+// --- FETCH CSV DATA ---
 async function loadKaggleData() {
     try {
         const response = await fetch('cities.csv'); 
         const csvText = await response.text();
-        
         const rows = csvText.split('\n');
         
-        // Start at i=1 to skip the header row
         for (let i = 1; i < rows.length; i++) {
             if (!rows[i].trim()) continue; 
-            
-            // Standard CSV parsing
-            // Adjust indices if your CSV columns are arranged differently!
             const cols = rows[i].split(',');
-            const cityName = cols[0] ? cols[0].trim() : ''; 
+            const cityName = cols[1] ? cols[1].trim() : ''; 
             const lat = parseFloat(cols[2]); 
             const lng = parseFloat(cols[3]); 
             
             if (cityName && !isNaN(lat) && !isNaN(lng)) {
                 cityData.push({ name: cityName, lat: lat, lng: lng });
-                
-                // Add to HTML datalist
                 const option = document.createElement('option');
                 option.value = cityName;
                 DOM.options.appendChild(option);
             }
         }
     } catch (error) {
-        console.error("CSV loading failed. Make sure you are running a local server!", error);
+        console.error("CSV loading failed.", error);
     }
 }
 
-// 2. Render Stops to UI
+// --- RENDER STOPS AND DROP PINS ---
 function renderStops() {
     DOM.list.innerHTML = stops.length ? '' : '<li class="list-group-item text-muted justify-content-center">No stops added</li>';
     
+    // Clear old map pins and routes
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    if (routeLayer) map.removeLayer(routeLayer);
+    
+    let bounds = L.latLngBounds();
+
     stops.forEach((stop, i) => {
         const badge = i === 0 ? `<span class="badge bg-primary ms-2">Origin</span>` : '';
         DOM.list.innerHTML += `
@@ -57,25 +66,34 @@ function renderStops() {
                 </div>
                 <button class="btn btn-sm btn-danger" onclick="deleteStop(${i})"><i class="fas fa-times"></i></button>
             </li>`;
+            
+        // Drop a pin on the map
+        let marker = L.marker([stop.lat, stop.lng]).addTo(map).bindPopup(`<b>${stop.name}</b>`);
+        markers.push(marker);
+        bounds.extend([stop.lat, stop.lng]);
     });
+    
+    // Zoom map to fit all pins
+    if (stops.length > 0) {
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
+    } else {
+        map.setView([20.5937, 78.9629], 5);
+    }
+
     localStorage.setItem('routeStops', JSON.stringify(stops));
 }
 
 window.deleteStop = (i) => { stops.splice(i, 1); renderStops(); };
 
-// 3. Add Stop from Dropdown
+// --- ADD STOP BUTTON ---
 document.getElementById('add-stop-btn').addEventListener('click', () => {
     const searchValue = DOM.search.value.trim();
-    
-    // Find the matching city in our CSV data array
     const selectedCity = cityData.find(c => c.name.toLowerCase() === searchValue.toLowerCase());
 
-    if (!selectedCity) {
-        return alert("Please select a valid city from the dropdown list!");
-    }
+    if (!selectedCity) return alert("Please select a valid city from the dropdown list!");
 
     stops.push({ name: selectedCity.name, lat: selectedCity.lat, lng: selectedCity.lng });
-    DOM.search.value = ''; // Clear input
+    DOM.search.value = ''; 
     renderStops();
 });
 
@@ -83,42 +101,53 @@ document.getElementById('clear-btn').addEventListener('click', () => {
     stops = []; renderStops(); DOM.results.innerHTML = "Enter an origin and destination to calculate.";
 });
 
-// 4. Algorithm Math (Haversine)
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const p = Math.PI / 180, c = Math.cos;
-    const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * Math.asin(Math.sqrt(a)); 
-}
-
-// 5. Execution
-document.getElementById('optimize-btn').addEventListener('click', () => {
+// --- EXECUTE OPTIMIZATION & DRAW ROUTE ---
+document.getElementById('optimize-btn').addEventListener('click', async () => {
     if (stops.length < 2) return alert("Need at least 2 stops to optimize");
     
-    let unvisited = [...stops], current = unvisited.shift(), route = [current], dist = 0;
+    DOM.results.innerHTML = "<div class='text-center p-3'><em>Routing via live map networks...</em></div>";
 
-    // Nearest-Neighbor
-    while (unvisited.length > 0) {
-        let nearestIdx = 0, minDist = Infinity;
-        unvisited.forEach((stop, i) => {
-            let d = calculateDistance(current.lat, current.lng, stop.lat, stop.lng);
-            if (d < minDist) { minDist = d; nearestIdx = i; }
+    const coordsString = stops.map(stop => `${stop.lng},${stop.lat}`).join(';');
+    
+    // We request geometries=geojson so the API gives us the line to draw
+    const osrmUrl = `https://router.project-osrm.org/trip/v1/driving/${coordsString}?source=first&roundtrip=false&geometries=geojson&overview=full`;
+
+    try {
+        const response = await fetch(osrmUrl);
+        const data = await response.json();
+
+        if (data.code !== 'Ok') throw new Error("API routing failed");
+
+        // Draw the blue road route on the map!
+        if (routeLayer) map.removeLayer(routeLayer);
+        routeLayer = L.geoJSON(data.trips[0].geometry, {
+            style: { color: '#0d6efd', weight: 5, opacity: 0.8 } 
+        }).addTo(map);
+        map.fitBounds(routeLayer.getBounds(), { padding: [30, 30] });
+
+        // Sort our stops based on the optimized index
+        const optimizedStops = [];
+        data.waypoints.forEach(wp => {
+            optimizedStops.push(stops[wp.waypoint_index]);
         });
-        current = unvisited.splice(nearestIdx, 1)[0];
-        route.push(current);
-        dist += minDist;
+
+        const realDistanceKm = data.trips[0].distance / 1000;
+        const cost = (realDistanceKm / parseFloat(DOM.eff.value)) * parseFloat(DOM.price.value);
+
+        let html = `<ol class="text-start mb-3">`;
+        optimizedStops.forEach(s => html += `<li><strong>${s.name}</strong></li>`);
+        html += `</ol>
+                 <div class="row text-center border-top pt-3">
+                    <div class="col"><h4 class="text-primary">${realDistanceKm.toFixed(2)} km</h4><small>Real Road Distance</small></div>
+                    <div class="col"><h4 class="text-success">₹${cost.toFixed(2)}</h4><small>Est. Fuel Cost</small></div>
+                 </div>`;
+                 
+        DOM.results.innerHTML = html;
+
+    } catch (error) {
+        console.error("Routing Error:", error);
+        DOM.results.innerHTML = `<span class="text-danger">Failed to calculate route. Ensure you have an internet connection.</span>`;
     }
-
-    const cost = (dist / parseFloat(DOM.eff.value)) * parseFloat(DOM.price.value);
-
-    let html = `<ol class="text-start mb-3">`;
-    route.forEach(s => html += `<li><strong>${s.name}</strong></li>`);
-    html += `</ol>
-             <div class="row text-center border-top pt-3">
-                <div class="col"><h4 class="text-primary">${dist.toFixed(2)} km</h4><small>Total Distance</small></div>
-                <div class="col"><h4 class="text-success">₹${cost.toFixed(2)}</h4><small>Est. Fuel Cost</small></div>
-             </div>`;
-             
-    DOM.results.innerHTML = html;
 });
 
 // Init
