@@ -1,14 +1,8 @@
-/* 
-   Custom Styles for Route Optimizer
-   Most styling is handled by Bootstrap 5, these are specific overrides.
-*/
-
 body {
-    background-color: #f4f6f9; /* Slightly cooler off-white background */
+    background-color: #f4f6f9;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-/* Ensure list items properly space the text and the delete button */
 .list-group-item {
     display: flex;
     justify-content: space-between;
@@ -16,12 +10,10 @@ body {
     transition: background-color 0.2s ease;
 }
 
-/* Slight hover effect for list items */
 .list-group-item:hover {
     background-color: #f8f9fa;
 }
 
-/* Make the cards feel a bit more premium when hovered */
 .card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -31,7 +23,6 @@ body {
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important;
 }
 
-/* Thicker top border for the navigation bar */
 .navbar {
-    border-top: 4px solid #198754; /* Matches the Bootstrap success green */
+    border-top: 4px solid #198754; 
 }

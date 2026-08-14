@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Your Custom CSS File -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -41,11 +40,11 @@
                         <h5 class="card-title text-primary"><i class="fas fa-map-marker-alt"></i> 1. Add Waypoint</h5>
                         <hr>
                         <div class="mb-3">
-                            <input type="text" id="stop-name" class="form-control mb-2" placeholder="Location Name (e.g., Campus)">
-                            <div class="input-group">
-                                <input type="number" id="stop-lat" class="form-control" placeholder="Latitude" step="any">
-                                <input type="number" id="stop-lng" class="form-control" placeholder="Longitude" step="any">
-                            </div>
+                            <label class="form-label small text-muted">Search Indian City</label>
+                            <input class="form-control mb-2" list="city-options" id="city-search" placeholder="Type a city name (e.g., Hisar, Delhi)...">
+                            <datalist id="city-options">
+                                <!-- JavaScript will inject Kaggle CSV data here -->
+                            </datalist>
                         </div>
                         <button id="add-stop-btn" class="btn btn-primary w-100 fw-bold">Add to Route</button>
                     </div>
