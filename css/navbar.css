@@ -1,0 +1,156 @@
+/*
+   ================================================================
+   RouteWise — Navbar, Live Rates Bar & User Profile Badge
+   ================================================================
+*/
+
+.custom-navbar {
+    background: rgba(15, 23, 42, 0.97) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    transition: var(--transition-smooth);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-icon-wrapper {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10b981, #2563eb);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+.nav-link {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.nav-link:hover { color: #ffffff !important; background: rgba(255,255,255,0.08); }
+.nav-link.active {
+    color: #ffffff !important;
+    background: rgba(37, 99, 235, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    font-weight: 600;
+}
+
+.nav-fuel-ticker {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    color: #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ticker-dot {
+    width: 8px; height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    animation: pulseGlow 2s infinite;
+}
+
+.user-profile-badge {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.9rem;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition-fast);
+}
+.user-profile-badge:hover { background: rgba(255,255,255,0.2); }
+
+.user-avatar-mini {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Live Rates Sub-Bar */
+.live-rates-bar {
+    background: rgba(15, 23, 42, 0.9);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0.5rem 0;
+}
+
+.fuel-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+}
+.fuel-pill-petrol { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.fuel-pill-diesel { background: rgba(2,132,199,0.15);  color: #38bdf8; border: 1px solid rgba(2,132,199,0.3); }
+.fuel-pill-cng    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+
+/* Footer */
+.custom-footer {
+    background: #0b1120;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: auto;
+    padding: 3.5rem 0 1.5rem;
+    font-size: 0.9rem;
+}
+.footer-heading { color: #ffffff; font-size: 1rem; font-weight: 700; margin-bottom: 1.2rem; font-family: 'Outfit', sans-serif; }
+.footer-link {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: var(--transition-fast);
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+.footer-link:hover { color: #38bdf8; transform: translateX(3px); }
+.social-icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    transition: var(--transition-fast);
+    text-decoration: none;
+}
+.social-icon-btn:hover { background: var(--primary); color: #ffffff; transform: translateY(-3px); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; margin-top: 2.5rem; font-size: 0.82rem; }
