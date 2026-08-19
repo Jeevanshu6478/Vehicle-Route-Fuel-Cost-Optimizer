@@ -16,13 +16,18 @@ function updateSavedCountBadge() {
 document.getElementById('btn-save-current-route')?.addEventListener('click', () => {
     if (!currentTripResult) { showToast('Please calculate a route first before saving.', 'warning'); return; }
 
+    // Fix #6 — also save current fuel settings so they restore on load
     const newSaved = {
-        id:       Date.now(),
-        title:    `${currentTripResult.origin} to ${currentTripResult.destination}`,
-        stops:    [...currentTripResult.orderedStops],
-        distance: currentTripResult.distanceKm,
-        cost:     currentTripResult.userTripCost,
-        date:     currentTripResult.date
+        id:        Date.now(),
+        title:     `${currentTripResult.origin} to ${currentTripResult.destination}`,
+        stops:     [...currentTripResult.orderedStops],
+        distance:  currentTripResult.distanceKm,
+        cost:      currentTripResult.userTripCost,
+        fuelType:  currentFuelType,
+        fuelEff:   parseFloat(document.getElementById('fuel-efficiency')?.value)  || 25,
+        fuelPrice: parseFloat(document.getElementById('fuel-price')?.value)        || 75.09,
+        cityName:  currentTripResult.selectedCityName || 'Reference (Delhi)',
+        date:      currentTripResult.date
     };
     savedRoutes.unshift(newSaved);
     localStorage.setItem('routeWiseSavedRoutes', JSON.stringify(savedRoutes));
@@ -45,7 +50,7 @@ window.openSavedRoutesModal = () => {
         div.innerHTML = `
             <div>
                 <h6 class="fw-bold mb-1 text-primary"><i class="fas fa-map-marker-alt me-1"></i> ${route.title}</h6>
-                <small class="text-muted">${route.stops.length} places • ${route.distance.toFixed(1)} km • ₹${route.cost.toFixed(0)} • Saved on ${route.date}</small>
+                <small class="text-muted">${route.stops.length} places &bull; ${route.distance.toFixed(1)} km &bull; &#8377;${route.cost.toFixed(0)} &bull; ${route.fuelType ? route.fuelType.toUpperCase() : 'CNG'} &bull; Saved ${route.date}</small>
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-primary"        onclick="loadSavedRoute(${i})">  <i class="fas fa-external-link-alt me-1"></i> Load Route</button>
@@ -69,6 +74,20 @@ window.loadSavedRoute = (index) => {
     intermediateStops = route.stops.slice(1, -1);
     renderIntermediateStops();
 
+    // Fix #6 — restore fuel type, efficiency and price from saved trip
+    if (route.fuelType) {
+        const fuelBtn = document.querySelector(`.fuel-btn[data-fuel="${route.fuelType}"]`);
+        if (fuelBtn) fuelBtn.click();
+    }
+    if (route.fuelEff) {
+        const effInput = document.getElementById('fuel-efficiency');
+        if (effInput) effInput.value = route.fuelEff;
+    }
+    if (route.fuelPrice) {
+        const priceInput = document.getElementById('fuel-price');
+        if (priceInput) priceInput.value = route.fuelPrice;
+    }
+
     const modalEl = document.getElementById('savedRoutesModal');
     const modal   = bootstrap.Modal.getInstance(modalEl);
     if (modal) modal.hide();
@@ -78,8 +97,10 @@ window.loadSavedRoute = (index) => {
     showToast(`Loaded "${route.title}" to planner!`, 'success');
 };
 
-// ── Delete Saved Route ────────────────────────────────────────────
+// Fix #10 — Confirm before deleting a saved trip
 window.deleteSavedRoute = (index) => {
+    const title = savedRoutes[index]?.title || 'this trip';
+    if (!confirm(`Remove "${title}" from your saved trips?`)) return;
     savedRoutes.splice(index, 1);
     localStorage.setItem('routeWiseSavedRoutes', JSON.stringify(savedRoutes));
     updateSavedCountBadge();
