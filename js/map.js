@@ -11,7 +11,7 @@ let markers      = [];
 let routeLayer   = null;
 let intermediateStops  = [];
 let currentTripResult  = null;
-let currentFuelType    = 'cng';
+// Note: currentFuelType is declared in config.js (shared state)
 
 // ── Leaflet Init ─────────────────────────────────────────────────
 function initializeMap() {
@@ -154,6 +154,12 @@ async function runRouteOptimization() {
     if (!originCity) { showToast(`Origin "${originName}" could not be found.`, 'error'); return; }
     if (!destCity)   { showToast(`Destination "${destName}" could not be found.`, 'error'); return; }
 
+    // Fix #2 — same city guard
+    if (originCity.name.toLowerCase() === destCity.name.toLowerCase()) {
+        showToast('Origin and Destination cannot be the same city!', 'warning');
+        return;
+    }
+
     const activeStops = [
         { ...originCity, type: 'origin' },
         ...intermediateStops.map(s => ({ ...s, type: 'intermediate' })),
@@ -207,19 +213,51 @@ async function runRouteOptimization() {
             document.getElementById('map-dist-val').textContent  = `${distanceKm.toFixed(1)} km`;
         }
 
-        // Fuel calculations
-        const petrolAmountL  = distanceKm / 15,   petrolTotalCost  = petrolAmountL  * 94.72;
-        const dieselAmountL  = distanceKm / 20,   dieselTotalCost  = dieselAmountL  * 87.62;
-        const cngAmountKg    = distanceKm / 25,   cngTotalCost     = cngAmountKg    * 75.09;
-        const userEff        = parseFloat(document.getElementById('fuel-efficiency')?.value) || 25;
-        const userPrice      = parseFloat(document.getElementById('fuel-price')?.value)      || 75.09;
-        const userTripCost   = (distanceKm / userEff) * userPrice;
-        const cngSavings     = petrolTotalCost - cngTotalCost;
-        const cngSavingsPct  = ((cngSavings / petrolTotalCost) * 100).toFixed(1);
-        const hours = Math.floor(durationMinutes / 60), mins = durationMinutes % 60;
-        const durationText = hours > 0 ? `${hours}h ${mins}m` : `${mins} mins`;
+        // Fix #1 — use prices from the user's selected city, not hardcoded Delhi defaults
+        const citySelectVal  = document.getElementById('city-rate-sync-select')?.value;
+        const selectedCity   = (citySelectVal && citySelectVal !== 'custom')
+            ? CITY_FUEL_RATES.find(c => c.city.toLowerCase().includes(citySelectVal.toLowerCase()))
+            : null;
+        const selCityName    = selectedCity ? selectedCity.city : 'Reference (Delhi)';
 
-        currentTripResult = { origin: originCity.name, destination: destCity.name, distanceKm, durationText, orderedStops, petrolAmountL, petrolPricePerL: 94.72, petrolTotalCost, dieselAmountL, dieselPricePerL: 87.62, dieselTotalCost, cngAmountKg, cngPricePerKg: 75.09, cngTotalCost, userTripCost, date: new Date().toLocaleDateString() };
+        const petrolPrice = selectedCity ? selectedCity.petrol : FUEL_DEFAULTS.petrol.price;
+        const dieselPrice = selectedCity ? selectedCity.diesel : FUEL_DEFAULTS.diesel.price;
+        const cngPrice    = selectedCity ? selectedCity.cng    : FUEL_DEFAULTS.cng.price;
+
+        const petrolAmountL  = distanceKm / FUEL_DEFAULTS.petrol.efficiency;
+        const dieselAmountL  = distanceKm / FUEL_DEFAULTS.diesel.efficiency;
+        const cngAmountKg    = distanceKm / FUEL_DEFAULTS.cng.efficiency;
+
+        const petrolTotalCost = petrolAmountL * petrolPrice;
+        const dieselTotalCost = dieselAmountL * dieselPrice;
+        const cngTotalCost    = cngAmountKg   * cngPrice;
+
+        const userEff      = parseFloat(document.getElementById('fuel-efficiency')?.value) || FUEL_DEFAULTS.cng.efficiency;
+        const userPrice    = parseFloat(document.getElementById('fuel-price')?.value)      || cngPrice;
+        const userTripCost = (distanceKm / userEff) * userPrice;
+
+        // Fix #4 — Compare All: apply user efficiency to all fuel types
+        const isCompareMode  = currentFuelType === 'compare';
+        const userPetrolCost = isCompareMode ? (distanceKm / userEff) * petrolPrice : null;
+        const userDieselCost = isCompareMode ? (distanceKm / userEff) * dieselPrice : null;
+        const userCngCost    = isCompareMode ? (distanceKm / userEff) * cngPrice    : null;
+
+        const cngSavings    = petrolTotalCost - cngTotalCost;
+        const cngSavingsPct = ((cngSavings / petrolTotalCost) * 100).toFixed(1);
+        const hours = Math.floor(durationMinutes / 60), mins = durationMinutes % 60;
+        const durationText  = hours > 0 ? `${hours}h ${mins}m` : `${mins} mins`;
+
+        currentTripResult = {
+            origin: originCity.name, destination: destCity.name,
+            distanceKm, durationText, orderedStops,
+            petrolAmountL, petrolPricePerL: petrolPrice, petrolTotalCost,
+            dieselAmountL, dieselPricePerL: dieselPrice, dieselTotalCost,
+            cngAmountKg, cngPricePerKg: cngPrice, cngTotalCost,
+            userTripCost, userEff, userPrice,
+            isCompareMode, userPetrolCost, userDieselCost, userCngCost,
+            selectedCityName: selCityName,
+            date: new Date().toLocaleDateString()
+        };
 
         renderDetailedResults(currentTripResult, cngSavings, cngSavingsPct);
         showToast(`RouteWise Distance: ${distanceKm.toFixed(1)} km calculated!`, 'success');
@@ -262,6 +300,37 @@ function renderDetailedResults(res, cngSavings, cngSavingsPct) {
         `<span class="badge ${s.type === 'origin' ? 'bg-primary' : s.type === 'destination' ? 'bg-success' : 'bg-light text-dark border'} me-1 mb-1">${idx + 1}. ${s.name}</span>`
     ).join(' <i class="fas fa-arrow-right text-muted small me-1"></i> ');
 
+    // Fix #4 — Compare All: build extra user-efficiency comparison section
+    const compareSection = res.isCompareMode ? `
+        <div class="mt-3 p-3 rounded-3 border border-primary" style="background:rgba(37,99,235,0.06);">
+            <div class="fw-bold text-primary small mb-2">
+                <i class="fas fa-layer-group me-1"></i>Your Vehicle Comparison &mdash; ${res.userEff} km/unit at your rates
+            </div>
+            <div class="row g-2">
+                <div class="col-4">
+                    <div class="text-center p-2 rounded border border-warning" style="background:rgba(245,158,11,0.08);">
+                        <small class="fw-bold d-block" style="color:#b45309;">⛽ Petrol</small>
+                        <div class="fw-bold">₹${res.userPetrolCost.toFixed(2)}</div>
+                        <small class="text-muted">₹${(res.userPetrolCost/res.distanceKm).toFixed(2)}/km</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-2 rounded border border-info" style="background:rgba(2,132,199,0.08);">
+                        <small class="fw-bold d-block" style="color:#0369a1;">🚛 Diesel</small>
+                        <div class="fw-bold">₹${res.userDieselCost.toFixed(2)}</div>
+                        <small class="text-muted">₹${(res.userDieselCost/res.distanceKm).toFixed(2)}/km</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-2 rounded border border-success" style="background:rgba(16,185,129,0.08);">
+                        <small class="fw-bold text-success d-block">🍃 CNG ⭐</small>
+                        <div class="fw-bold text-success">₹${res.userCngCost.toFixed(2)}</div>
+                        <small class="text-muted">₹${(res.userCngCost/res.distanceKm).toFixed(2)}/km</small>
+                    </div>
+                </div>
+            </div>
+        </div>` : '';
+
     el.innerHTML = `
         <div class="animate-fade-in">
             <div class="route-distance-hero-box">
@@ -281,7 +350,10 @@ function renderDetailedResults(res, cngSavings, cngSavingsPct) {
                 <div class="d-flex flex-wrap align-items-center">${stopsHtml}</div>
             </div>
 
-            <div class="fw-bold text-dark small mb-2"><i class="fas fa-gas-pump text-primary me-1"></i>Fuel Amount (L/kg), Unit Price & Total Trip Cost:</div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-bold text-dark small"><i class="fas fa-gas-pump text-primary me-1"></i>Fuel Amount, Unit Price &amp; Total Trip Cost:</div>
+                <span class="badge bg-light text-muted border" style="font-size:0.7rem;"><i class="fas fa-map-pin me-1"></i>${res.selectedCityName} Rates</span>
+            </div>
             <div class="fuel-comp-grid">
                 <div class="fuel-card petrol">
                     <div><div class="fuel-card-title"><i class="fas fa-gas-pump"></i> Petrol</div><div class="fuel-card-cost">₹${res.petrolTotalCost.toFixed(2)}</div></div>
@@ -289,6 +361,7 @@ function renderDetailedResults(res, cngSavings, cngSavingsPct) {
                         <div class="fuel-card-row"><span>Amount Needed:</span><strong>${res.petrolAmountL.toFixed(1)} Litres</strong></div>
                         <div class="fuel-card-row"><span>Unit Rate:</span><span>₹${res.petrolPricePerL.toFixed(2)} / L</span></div>
                         <div class="fuel-card-row"><span>Running Cost:</span><span>₹${(res.petrolTotalCost/res.distanceKm).toFixed(2)} / km</span></div>
+                        <div class="fuel-card-row"><span>Efficiency:</span><span>${FUEL_DEFAULTS.petrol.efficiency} km/L</span></div>
                     </div>
                 </div>
                 <div class="fuel-card diesel">
@@ -297,6 +370,7 @@ function renderDetailedResults(res, cngSavings, cngSavingsPct) {
                         <div class="fuel-card-row"><span>Amount Needed:</span><strong>${res.dieselAmountL.toFixed(1)} Litres</strong></div>
                         <div class="fuel-card-row"><span>Unit Rate:</span><span>₹${res.dieselPricePerL.toFixed(2)} / L</span></div>
                         <div class="fuel-card-row"><span>Running Cost:</span><span>₹${(res.dieselTotalCost/res.distanceKm).toFixed(2)} / km</span></div>
+                        <div class="fuel-card-row"><span>Efficiency:</span><span>${FUEL_DEFAULTS.diesel.efficiency} km/L</span></div>
                     </div>
                 </div>
                 <div class="fuel-card cng">
@@ -306,13 +380,15 @@ function renderDetailedResults(res, cngSavings, cngSavingsPct) {
                         <div class="fuel-card-row"><span>Amount Needed:</span><strong class="text-success">${res.cngAmountKg.toFixed(1)} kg</strong></div>
                         <div class="fuel-card-row"><span>Unit Rate:</span><span>₹${res.cngPricePerKg.toFixed(2)} / kg</span></div>
                         <div class="fuel-card-row"><span>Running Cost:</span><span class="text-success fw-bold">₹${(res.cngTotalCost/res.distanceKm).toFixed(2)} / km</span></div>
+                        <div class="fuel-card-row"><span>Efficiency:</span><span>${FUEL_DEFAULTS.cng.efficiency} km/kg</span></div>
                     </div>
                 </div>
             </div>
             <div class="savings-banner">
-                <div class="savings-banner-text"><i class="fas fa-leaf me-1 text-warning"></i><strong>CNG Green Savings:</strong> Save <span class="fw-bold text-white">₹${cngSavings.toFixed(2)}</span> (${cngSavingsPct}%) compared to Petrol on this ${res.distanceKm.toFixed(0)} km journey!</div>
+                <div class="savings-banner-text"><i class="fas fa-leaf me-1 text-warning"></i><strong>CNG Green Savings:</strong> Save <span class="fw-bold text-white">₹${cngSavings.toFixed(2)}</span> (${cngSavingsPct}%) vs Petrol on this ${res.distanceKm.toFixed(0)} km journey!</div>
                 <div class="savings-banner-amount">Save Budget</div>
             </div>
+            ${compareSection}
         </div>`;
 }
 
@@ -330,8 +406,16 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 
 // ── Map Control Buttons ───────────────────────────────────────────
 document.getElementById('btn-fit-map')?.addEventListener('click', () => { if (map && markers.length) map.fitBounds(L.latLngBounds(markers.map(m => m.getLatLng())), { padding: [40, 40] }); });
+
+// Fix #7 — Reverse route now auto-recalculates
 document.getElementById('btn-reverse-route')?.addEventListener('click', () => {
     const o = document.getElementById('origin-city-input');
     const d = document.getElementById('dest-city-input');
-    if (o && d) { [o.value, d.value] = [d.value, o.value]; showToast('Route reversed!', 'info'); }
+    if (o && d && o.value && d.value) {
+        [o.value, d.value] = [d.value, o.value];
+        showToast('Route reversed! Recalculating...', 'info');
+        runRouteOptimization();
+    } else {
+        showToast('Enter origin and destination cities first.', 'warning');
+    }
 });

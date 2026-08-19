@@ -67,6 +67,9 @@ const FALLBACK_INDIAN_CITIES = [
     { name: "Shimla",         lat: 31.1048, lng: 77.1734 }
 ];
 
+// ── Shared App State (accessible across all modules) ───────────────
+let currentFuelType = 'cng'; // Tracks the active fuel selector button
+
 // Default mileage/price per fuel type
 const FUEL_DEFAULTS = {
     petrol:  { efficiency: 15, price: 94.72, unit: "km/L",   priceUnit: "₹/L",  co2Factor: 2.31 },

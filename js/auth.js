@@ -98,8 +98,15 @@ function unlockApplication() {
         document.getElementById('nav-user-avatar')?.  textContent && (document.getElementById('nav-user-avatar').textContent  = currentUser.name.charAt(0).toUpperCase());
         document.getElementById('nav-user-vehicle')?.textContent  && (document.getElementById('nav-user-vehicle').textContent = `Vehicle: ${currentUser.fuel.toUpperCase()} (${currentUser.mileage} km/unit)`);
 
+        // Fix #5 — apply user's signup mileage (not overwritten by FUEL_DEFAULTS)
         const fuelBtn = document.querySelector(`.fuel-btn[data-fuel="${currentUser.fuel}"]`);
-        if (fuelBtn) fuelBtn.click();
+        if (fuelBtn) fuelBtn.click(); // sets defaults from FUEL_DEFAULTS first
+
+        // Then override efficiency with user's actual saved mileage
+        if (currentUser.mileage) {
+            const effInput = document.getElementById('fuel-efficiency');
+            if (effInput) effInput.value = currentUser.mileage;
+        }
     }
 
     initializeMap();

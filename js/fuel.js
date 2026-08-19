@@ -5,6 +5,14 @@
  * Depends on: config.js, utils.js
  */
 
+// Fix #8 — debounce helper to prevent heavy slider redraws on every pixel
+function debounce(fn, delay = 120) {
+    let timer;
+    return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+}
+
+const debouncedSimUpdate = debounce(updateFuelSimulator, 120);
+
 // ── Fuel Simulator (View 2) ───────────────────────────────────────
 function updateFuelSimulator() {
     const simRange = document.getElementById('calc-dist-range');
@@ -56,10 +64,10 @@ function updateCommuteCalculator(petrolPerKm, cngPerKm) {
     if (aSaveEl) aSaveEl.textContent = `₹${Math.round(annualSave).toLocaleString('en-IN')} / year`;
 }
 
-// Wire simulator input events
-document.getElementById('calc-dist-range')?.addEventListener('input', updateFuelSimulator);
+// Wire simulator input events (all debounced)
+document.getElementById('calc-dist-range')?.addEventListener('input', debouncedSimUpdate);
 ['sim-petrol-eff','sim-diesel-eff','sim-cng-eff','sim-petrol-price','sim-diesel-price','sim-cng-price','commute-daily-km','commute-days-month'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', updateFuelSimulator);
+    document.getElementById(id)?.addEventListener('input', debouncedSimUpdate);
 });
 
 // ── City Fuel Rates Table (View 3) ───────────────────────────────
