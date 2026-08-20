@@ -4,7 +4,33 @@
  * Depends on: utils.js, map.js (runRouteOptimization, renderIntermediateStops)
  */
 
-let savedRoutes = JSON.parse(localStorage.getItem('routeWiseSavedRoutes')) || [];
+function getSavedRoutesStorageKey() {
+    const accountId = currentUser?.email?.trim().toLowerCase();
+    return accountId ? `routeWiseSavedRoutes:${accountId}` : null;
+}
+
+function loadSavedRoutesForCurrentUser() {
+    const storageKey = getSavedRoutesStorageKey();
+    if (!storageKey) return [];
+
+    try {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function persistSavedRoutes() {
+    const storageKey = getSavedRoutesStorageKey();
+    if (storageKey) localStorage.setItem(storageKey, JSON.stringify(savedRoutes));
+}
+
+let savedRoutes = loadSavedRoutesForCurrentUser();
+
+window.refreshSavedRoutesForCurrentUser = () => {
+    savedRoutes = loadSavedRoutesForCurrentUser();
+    updateSavedCountBadge();
+};
 
 // ── Badge Counter ─────────────────────────────────────────────────
 function updateSavedCountBadge() {
@@ -30,7 +56,7 @@ document.getElementById('btn-save-current-route')?.addEventListener('click', () 
         date:      currentTripResult.date
     };
     savedRoutes.unshift(newSaved);
-    localStorage.setItem('routeWiseSavedRoutes', JSON.stringify(savedRoutes));
+    persistSavedRoutes();
     updateSavedCountBadge();
     showToast(`Saved trip "${newSaved.title}"!`, 'success');
 });
@@ -102,7 +128,7 @@ window.deleteSavedRoute = (index) => {
     const title = savedRoutes[index]?.title || 'this trip';
     if (!confirm(`Remove "${title}" from your saved trips?`)) return;
     savedRoutes.splice(index, 1);
-    localStorage.setItem('routeWiseSavedRoutes', JSON.stringify(savedRoutes));
+    persistSavedRoutes();
     updateSavedCountBadge();
     openSavedRoutesModal();
     showToast('Trip removed from saved list', 'info');
