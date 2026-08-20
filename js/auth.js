@@ -1,11 +1,33 @@
 /**
  * RouteWise — auth.js
- * Login, signup, logout, session restore, car animation trigger.
+ * Account Database, Login, Signup, Logout, Session restore, Car animation.
  * Depends on: config.js, utils.js
  */
 
-// ── Auth State ───────────────────────────────────────────────────
+// ── Auth State & Registered Accounts Database ─────────────────────
 let currentUser = JSON.parse(localStorage.getItem('routeWiseUser')) || null;
+
+const DEFAULT_SEED_USERS = [
+    { name: "Vikram Kumar", email: "driver@routewise.in", password: "password123", fuel: "cng", mileage: 25 },
+    { name: "Ananya Sharma", email: "fleet@routewise.in", password: "password123", fuel: "diesel", mileage: 20 }
+];
+
+function getRegisteredUsers() {
+    const stored = localStorage.getItem('routeWiseUsers');
+    if (!stored) {
+        localStorage.setItem('routeWiseUsers', JSON.stringify(DEFAULT_SEED_USERS));
+        return DEFAULT_SEED_USERS;
+    }
+    try {
+        return JSON.parse(stored) || DEFAULT_SEED_USERS;
+    } catch (e) {
+        return DEFAULT_SEED_USERS;
+    }
+}
+
+function saveRegisteredUsers(users) {
+    localStorage.setItem('routeWiseUsers', JSON.stringify(users));
+}
 
 // ── Auth Mode Toggle (Sign In / Sign Up tabs) ────────────────────
 window.setGatewayAuthMode = (mode) => {
@@ -15,36 +37,76 @@ window.setGatewayAuthMode = (mode) => {
     const formSignUp = document.getElementById('gateway-signup-form');
 
     if (mode === 'signin') {
-        btnSignIn.classList.add('active');    btnSignUp.classList.remove('active');
-        formSignIn.style.display = 'block';   formSignUp.style.display = 'none';
+        btnSignIn?.classList.add('active');    btnSignUp?.classList.remove('active');
+        if (formSignIn) formSignIn.style.display = 'block';
+        if (formSignUp) formSignUp.style.display = 'none';
     } else {
-        btnSignUp.classList.add('active');    btnSignIn.classList.remove('active');
-        formSignUp.style.display = 'block';   formSignIn.style.display = 'none';
+        btnSignUp?.classList.add('active');    btnSignIn?.classList.remove('active');
+        if (formSignUp) formSignUp.style.display = 'block';
+        if (formSignIn) formSignIn.style.display = 'none';
     }
 };
 
 // ── Form Submit Handlers ─────────────────────────────────────────
+
+// 1. Sign In Form
 document.getElementById('gateway-signin-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = document.getElementById('gateway-signin-email')?.value.trim() || 'driver@routewise.in';
-    triggerLoginSequence({ name: email.split('@')[0].toUpperCase(), email, fuel: 'cng', mileage: 25 });
+    const emailInput    = document.getElementById('gateway-signin-email')?.value.trim();
+    const passwordInput = document.getElementById('gateway-signin-password')?.value;
+
+    if (!emailInput || !passwordInput) {
+        showToast("Please enter both email/username and password.", "warning");
+        return;
+    }
+
+    const users = getRegisteredUsers();
+    const matchedUser = users.find(u =>
+        u.email.toLowerCase() === emailInput.toLowerCase() && u.password === passwordInput
+    );
+
+    if (matchedUser) {
+        triggerLoginSequence(matchedUser);
+    } else {
+        showToast("Invalid email or password. Please check your credentials or create an account.", "error");
+    }
 });
 
+// 2. Sign Up Form
 document.getElementById('gateway-signup-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name    = document.getElementById('gateway-signup-name')?.value.trim()    || 'New User';
-    const email   = document.getElementById('gateway-signup-email')?.value.trim()   || 'user@routewise.in';
-    const fuel    = document.getElementById('gateway-signup-fuel')?.value            || 'cng';
+    const name    = document.getElementById('gateway-signup-name')?.value.trim();
+    const email   = document.getElementById('gateway-signup-email')?.value.trim().toLowerCase();
+    const fuel    = document.getElementById('gateway-signup-fuel')?.value || 'cng';
     const mileage = parseFloat(document.getElementById('gateway-signup-mileage')?.value) || 24;
-    triggerLoginSequence({ name, email, fuel, mileage });
-});
+    const password= document.getElementById('gateway-signup-password')?.value;
 
-// ── Demo Quick Login Buttons ─────────────────────────────────────
-document.getElementById('btn-quick-cng-driver')?.addEventListener('click', () => {
-    triggerLoginSequence({ name: "Vikram (CNG Commuter)", email: "vikram.cng@driver.in", fuel: "cng", mileage: 26 });
-});
-document.getElementById('btn-quick-fleet-mgr')?.addEventListener('click', () => {
-    triggerLoginSequence({ name: "Ananya (Fleet Manager)", email: "ananya.fleet@logistics.in", fuel: "diesel", mileage: 20 });
+    if (!name || !email || !password) {
+        showToast("Please fill in all required account fields.", "warning");
+        return;
+    }
+
+    if (password.length < 4) {
+        showToast("Password must be at least 4 characters long.", "warning");
+        return;
+    }
+
+    const users = getRegisteredUsers();
+    const exists = users.some(u => u.email.toLowerCase() === email);
+
+    if (exists) {
+        showToast(`An account with email "${email}" already exists. Please sign in.`, "warning");
+        setGatewayAuthMode('signin');
+        const emailField = document.getElementById('gateway-signin-email');
+        if (emailField) emailField.value = email;
+        return;
+    }
+
+    const newUser = { name, email, password, fuel, mileage, createdAt: new Date().toISOString() };
+    users.push(newUser);
+    saveRegisteredUsers(users);
+
+    triggerLoginSequence(newUser);
 });
 
 // ── Car Animation + App Unlock ───────────────────────────────────
@@ -86,39 +148,50 @@ function triggerLoginSequence(userObj) {
 }
 
 function unlockApplication() {
-    const authGateway   = document.getElementById('auth-gateway-view');
-    const mainAppWrapper = document.getElementById('main-app-wrapper');
+    const authGateway    = document.getElementById('auth-gateway-view');
+    const mainAppWrapper  = document.getElementById('main-app-wrapper');
 
     if (authGateway)    authGateway.style.display   = 'none';
     if (mainAppWrapper) mainAppWrapper.style.display = 'block';
 
     if (currentUser) {
-        document.getElementById('nav-user-name')?.    textContent && (document.getElementById('nav-user-name').textContent    = currentUser.name);
-        document.getElementById('nav-user-email')?.   textContent && (document.getElementById('nav-user-email').textContent   = currentUser.email);
-        document.getElementById('nav-user-avatar')?.  textContent && (document.getElementById('nav-user-avatar').textContent  = currentUser.name.charAt(0).toUpperCase());
-        document.getElementById('nav-user-vehicle')?.textContent  && (document.getElementById('nav-user-vehicle').textContent = `Vehicle: ${currentUser.fuel.toUpperCase()} (${currentUser.mileage} km/unit)`);
+        if (document.getElementById('nav-user-name'))    document.getElementById('nav-user-name').textContent    = currentUser.name;
+        if (document.getElementById('nav-user-email'))   document.getElementById('nav-user-email').textContent   = currentUser.email;
+        if (document.getElementById('nav-user-avatar'))  document.getElementById('nav-user-avatar').textContent  = currentUser.name.charAt(0).toUpperCase();
+        if (document.getElementById('nav-user-vehicle')) document.getElementById('nav-user-vehicle').textContent = `Vehicle: ${currentUser.fuel.toUpperCase()} (${currentUser.mileage} km/unit)`;
 
-        // Fix #5 — apply user's signup mileage (not overwritten by FUEL_DEFAULTS)
         const fuelBtn = document.querySelector(`.fuel-btn[data-fuel="${currentUser.fuel}"]`);
-        if (fuelBtn) fuelBtn.click(); // sets defaults from FUEL_DEFAULTS first
+        if (fuelBtn) fuelBtn.click();
 
-        // Then override efficiency with user's actual saved mileage
         if (currentUser.mileage) {
             const effInput = document.getElementById('fuel-efficiency');
             if (effInput) effInput.value = currentUser.mileage;
         }
     }
 
-    initializeMap();
-    setTimeout(() => { if (map) map.invalidateSize(); }, 200);
-    updateSavedCountBadge();
+    if (typeof initializeMap === 'function') initializeMap();
+    setTimeout(() => { if (typeof map !== 'undefined' && map) map.invalidateSize(); }, 200);
+    if (typeof updateSavedCountBadge === 'function') updateSavedCountBadge();
 }
 
 // ── Logout ───────────────────────────────────────────────────────
 window.logoutUser = () => {
     currentUser = null;
     localStorage.removeItem('routeWiseUser');
-    document.getElementById('main-app-wrapper').style.display = 'none';
-    document.getElementById('auth-gateway-view').style.display = 'flex';
+
+    // Reset input fields
+    const signinEmail = document.getElementById('gateway-signin-email');
+    const signinPass  = document.getElementById('gateway-signin-password');
+    if (signinEmail) signinEmail.value = '';
+    if (signinPass)  signinPass.value  = '';
+
+    const mainAppWrapper = document.getElementById('main-app-wrapper');
+    const authGateway    = document.getElementById('auth-gateway-view');
+
+    if (mainAppWrapper) mainAppWrapper.style.display = 'none';
+    if (authGateway)    authGateway.style.display    = 'flex';
+
+    setGatewayAuthMode('signin');
     showToast("Signed out successfully from RouteWise", "info");
 };
+

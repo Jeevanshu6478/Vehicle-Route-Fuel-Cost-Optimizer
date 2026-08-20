@@ -28,6 +28,8 @@ function showToast(message, type = 'info') {
 
 // ── SPA Tab Router ───────────────────────────────────────────────
 function switchTab(tabName) {
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+
     document.querySelectorAll('.tab-view-container').forEach(el => el.classList.remove('active-tab'));
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
 
