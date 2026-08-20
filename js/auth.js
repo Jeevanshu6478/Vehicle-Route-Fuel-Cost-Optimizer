@@ -113,6 +113,7 @@ document.getElementById('gateway-signup-form')?.addEventListener('submit', (e) =
 function triggerLoginSequence(userObj) {
     currentUser = userObj;
     localStorage.setItem('routeWiseUser', JSON.stringify(currentUser));
+    if (typeof refreshSavedRoutesForCurrentUser === 'function') refreshSavedRoutesForCurrentUser();
 
     const overlay   = document.getElementById('car-transition-overlay');
     const progress  = document.getElementById('car-anim-progress');
@@ -147,6 +148,15 @@ function triggerLoginSequence(userObj) {
     }
 }
 
+function getUserInitials(name) {
+    if (!name) return 'U';
+    const words = name.trim().split(/\s+/);
+    if (words.length >= 2) {
+        return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+    }
+    return words[0].charAt(0).toUpperCase();
+}
+
 function unlockApplication() {
     const authGateway    = document.getElementById('auth-gateway-view');
     const mainAppWrapper  = document.getElementById('main-app-wrapper');
@@ -157,7 +167,7 @@ function unlockApplication() {
     if (currentUser) {
         if (document.getElementById('nav-user-name'))    document.getElementById('nav-user-name').textContent    = currentUser.name;
         if (document.getElementById('nav-user-email'))   document.getElementById('nav-user-email').textContent   = currentUser.email;
-        if (document.getElementById('nav-user-avatar'))  document.getElementById('nav-user-avatar').textContent  = currentUser.name.charAt(0).toUpperCase();
+        if (document.getElementById('nav-user-avatar'))  document.getElementById('nav-user-avatar').textContent  = getUserInitials(currentUser.name);
         if (document.getElementById('nav-user-vehicle')) document.getElementById('nav-user-vehicle').textContent = `Vehicle: ${currentUser.fuel.toUpperCase()} (${currentUser.mileage} km/unit)`;
 
         const fuelBtn = document.querySelector(`.fuel-btn[data-fuel="${currentUser.fuel}"]`);
@@ -177,6 +187,7 @@ function unlockApplication() {
 // ── Logout ───────────────────────────────────────────────────────
 window.logoutUser = () => {
     currentUser = null;
+    savedRoutes = [];
     localStorage.removeItem('routeWiseUser');
 
     // Reset input fields

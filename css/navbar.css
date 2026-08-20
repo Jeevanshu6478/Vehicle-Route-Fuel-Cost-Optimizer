@@ -24,6 +24,19 @@
     gap: 0.5rem;
 }
 
+.custom-navbar .navbar-nav {
+    gap: 0.35rem;
+}
+
+.custom-navbar .navbar-collapse {
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.custom-navbar .navbar-collapse > .d-flex {
+    gap: 0.75rem !important;
+}
+
 .brand-icon-wrapper {
     width: 36px; height: 36px;
     border-radius: 10px;
@@ -65,6 +78,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
+    white-space: nowrap;
 }
 
 .ticker-dot {
@@ -78,28 +92,47 @@
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: var(--radius-pill);
-    padding: 0.35rem 0.9rem;
+    padding: 0.35rem 0.85rem;
     color: #ffffff;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: flex-start;
+    gap: 0.55rem;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 600;
     transition: var(--transition-fast);
+    width: 170px;
+    box-sizing: border-box;
 }
 .user-profile-badge:hover { background: rgba(255,255,255,0.2); }
+.user-profile-badge::after {
+    margin-left: auto !important;
+}
 
 .user-avatar-mini {
-    width: 26px; height: 26px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     background: linear-gradient(135deg, #10b981, #3b82f6);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+}
+
+#nav-user-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+    text-transform: capitalize;
 }
 
 /* Live Rates Sub-Bar */
@@ -154,3 +187,14 @@
 }
 .social-icon-btn:hover { background: var(--primary); color: #ffffff; transform: translateY(-3px); }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; margin-top: 2.5rem; font-size: 0.82rem; }
+
+@media (max-width: 991.98px) {
+    .custom-navbar .navbar-nav {
+        gap: 0.15rem;
+        padding-top: 0.75rem;
+    }
+
+    .custom-navbar .navbar-collapse > .d-flex {
+        padding-top: 0.5rem;
+    }
+}
