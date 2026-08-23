@@ -171,6 +171,9 @@
 .fuel-pill-petrol { background: var(--amber-soft); color: var(--amber); border: 1px solid #f0d9bd; }
 .fuel-pill-diesel { background: var(--blue-soft);  color: var(--blue);  border: 1px solid #c7dbfe; }
 .fuel-pill-cng    { background: var(--green-soft); color: var(--green); border: 1px solid #a7f3d0; }
+.fuel-pill-petrol { background: rgba(225,29,72,0.15); color: #fb7185; border: 1px solid rgba(225,29,72,0.3); }
+.fuel-pill-diesel { background: rgba(2,132,199,0.15);  color: #38bdf8; border: 1px solid rgba(2,132,199,0.3); }
+.fuel-pill-cng    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
 
 /* ── Footer ───────────────────────────────────────────────────── */
 .custom-footer {

@@ -13,13 +13,13 @@ async function initApp() {
     renderFuelRatesTable();
     updateFuelSimulator();
 
-    // 3. Session restore: if user was logged in, skip auth screen
-    if (currentUser) {
-        unlockApplication();
-    } else {
-        document.getElementById('auth-gateway-view').style.display  = 'flex';
-        document.getElementById('main-app-wrapper').style.display   = 'none';
-    }
+    // 3. Always require login on opening the site (no auto-open without login)
+    currentUser = null;
+    localStorage.removeItem('routeWiseUser');
+    const authGateway = document.getElementById('auth-gateway-view');
+    const mainApp     = document.getElementById('main-app-wrapper');
+    if (authGateway) authGateway.style.display = 'flex';
+    if (mainApp)     mainApp.style.display     = 'none';
 }
 
 initApp();

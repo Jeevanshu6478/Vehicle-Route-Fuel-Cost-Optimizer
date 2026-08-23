@@ -786,84 +786,135 @@
             </section>
 
             <!-- ========================================================
-                 VIEW 4: About Me & Developer Details
+                 VIEW 4: About RouteWise & Creator
                  ======================================================== -->
             <section id="view-about" class="tab-view-container">
+                <!-- Hero Introduction -->
                 <div class="about-hero-card mb-4 animate-fade-in">
-                    <div class="row align-items-center">
-                        <div class="col-lg-3 text-center mb-3 mb-lg-0">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-3 text-center">
                             <div class="dev-avatar-large">
-                                <i class="fas fa-user-tie"></i>
+                                <i class="fas fa-route"></i>
                             </div>
                         </div>
                         <div class="col-lg-9">
-                            <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-2">FULL STACK DEVELOPER</span>
-                            <h2 class="fw-bold mb-2">About The Developer & RouteWise</h2>
-                            <p class="text-light opacity-90 mb-3" style="max-width: 750px;">
-                                Passionate software engineer dedicated to building high-performance, algorithmic web applications that solve real-world logistical, transport, and economic challenges.
+                            <span class="badge bg-success bg-opacity-25 text-white px-3 py-1 rounded-pill mb-2 border border-success border-opacity-50 fw-semibold">
+                                <i class="fas fa-heart me-1"></i> Built for Indian Commuters & Travelers
+                            </span>
+                            <h2 class="fw-bold mb-2 text-white">About RouteWise & The Mission</h2>
+                            <p class="text-light opacity-90 mb-3 fs-6" style="max-width: 750px;">
+                                RouteWise was created with a clear purpose: to help everyday drivers, commuters, and road-trippers across India navigate highways effortlessly and make smart, money-saving fuel choices.
                             </p>
-                            
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="skill-tag"><i class="fab fa-js text-warning"></i> JavaScript (ES6+)</span>
-                                <span class="skill-tag"><i class="fas fa-map-marked text-info"></i> Leaflet.js & GIS</span>
-                                <span class="skill-tag"><i class="fas fa-route text-success"></i> OSRM Routing Engine</span>
-                                <span class="skill-tag"><i class="fab fa-html5 text-danger"></i> HTML5 & Semantic Web</span>
-                                <span class="skill-tag"><i class="fab fa-css3-alt text-primary"></i> CSS3 & Animations</span>
-                                <span class="skill-tag"><i class="fab fa-bootstrap text-info"></i> Bootstrap 5</span>
-                                <span class="skill-tag"><i class="fas fa-database text-warning"></i> 4,000+ Indian Cities Data</span>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <a href="https://github.com" target="_blank" class="social-icon-btn" title="GitHub Profile"><i class="fab fa-github"></i></a>
-                                <a href="https://linkedin.com" target="_blank" class="social-icon-btn" title="LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="mailto:contact@routewise.io" class="social-icon-btn" title="Email"><i class="fas fa-envelope"></i></a>
-                            </div>
+                            <p class="text-light opacity-80 small mb-0" style="max-width: 750px;">
+                                With fluctuating fuel prices, knowing whether Petrol, Diesel, or CNG is most economical for your journey—and having exact highway distances and costs at your fingertips—makes every road trip budget-friendly and hassle-free.
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Contact Form -->
+                <!-- 4 Value Pillars / Core Features Grid (User-Centric & Practical) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="glass-card p-3 h-100 feature-pillar-card animate-fade-in">
+                            <div class="feature-pillar-icon icon-blue mb-2">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">Pan-India Routes</h6>
+                            <p class="text-muted small mb-0">Door-to-door road distance calculations across 4,000+ Indian cities and highway stops.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="glass-card p-3 h-100 feature-pillar-card animate-fade-in" style="animation-delay: 0.05s;">
+                            <div class="feature-pillar-icon icon-emerald mb-2">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">Multi-Fuel Comparison</h6>
+                            <p class="text-muted small mb-0">Instant side-by-side fuel required (Litres/kg) and total expenditure for Petrol, Diesel & CNG.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="glass-card p-3 h-100 feature-pillar-card animate-fade-in" style="animation-delay: 0.1s;">
+                            <div class="feature-pillar-icon icon-amber mb-2">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">Commute Savings</h6>
+                            <p class="text-muted small mb-0">Calculate daily, monthly, and yearly savings to optimize regular office and family travel budgets.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="glass-card p-3 h-100 feature-pillar-card animate-fade-in" style="animation-delay: 0.15s;">
+                            <div class="feature-pillar-icon icon-cyan mb-2">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">Eco & Budget Friendly</h6>
+                            <p class="text-muted small mb-0">Explore cleaner CNG travel alternatives that reduce both carbon emissions and fuel costs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story & Community Support / Contact Form -->
                 <div class="glass-card p-4">
                     <div class="row">
                         <div class="col-lg-6 mb-4 mb-lg-0">
                             <h4 class="fw-bold text-dark mb-2">Get in touch</h4>
                             <p class="text-muted small mb-4">Have questions about the algorithm, route data, or want to collaborate? Drop a message!</p>
+                    <div class="row g-4">
+                        <div class="col-lg-5">
+                            <span class="section-tag"><i class="fas fa-user-circle"></i> Creator's Note</span>
+                            <h4 class="fw-bold text-dark mb-2">Why I Built RouteWise</h4>
+                            <p class="text-muted small mb-3">
+                                Traveling across India's highways is always an adventure, but unpredictable fuel costs often catch travelers off guard. RouteWise was designed as a simple, powerful companion for every driver—from daily city commuters to long-distance highway explorers.
+                            </p>
                             
-                            <div class="mb-3 d-flex align-items-center gap-3">
-                                <div class="brand-icon-wrapper" style="width:40px; height:40px;">
-                                    <i class="fas fa-envelope"></i>
+                            <div class="p-3 bg-light rounded-3 border mb-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="brand-icon-wrapper" style="width:42px; height:42px; flex-shrink: 0;">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small text-muted fw-semibold">Community Support & Help</div>
+                                        <strong class="text-dark">support@routewise.in</strong>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="small text-muted">Email Us</div>
-                                    <strong class="text-dark">developer@routewise.io</strong>
-                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="small text-muted fw-semibold me-2">Connect:</span>
+                                <a href="https://github.com" target="_blank" class="social-icon-btn" title="GitHub"><i class="fab fa-github"></i></a>
+                                <a href="https://linkedin.com" target="_blank" class="social-icon-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="mailto:support@routewise.in" class="social-icon-btn" title="Email Us"><i class="fas fa-envelope"></i></a>
                             </div>
                         </div>
 
-                        <div class="col-lg-6">
-                            <form id="contact-form">
-                                <div class="row g-3 mb-3">
-                                    <div class="col-6">
-                                        <label class="form-label small text-muted">Your Name</label>
-                                        <input type="text" class="form-control" id="contact-name" placeholder="John Doe" required>
+                        <div class="col-lg-7">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <h5 class="fw-bold text-dark mb-1"><i class="fas fa-paper-plane text-primary me-2"></i>Send Feedback or Suggest a Feature</h5>
+                                <p class="text-muted small mb-3">Have feedback, want to suggest new cities or highway routes, or need assistance? Send a message below!</p>
+                                
+                                <form id="contact-form">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label class="form-label small fw-semibold text-muted">Your Name</label>
+                                            <input type="text" class="form-control" id="contact-name" placeholder="Rajesh Kumar" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="form-label small fw-semibold text-muted">Your Email</label>
+                                            <input type="email" class="form-control" id="contact-email" placeholder="rajesh@example.com" required>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <label class="form-label small text-muted">Your Email</label>
-                                        <input type="email" class="form-control" id="contact-email" placeholder="name@example.com" required>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold text-muted">Subject</label>
+                                        <input type="text" class="form-control" id="contact-subject" placeholder="Feature Suggestion / City Rate Update / Route Inquiry" required>
                                     </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label small text-muted">Subject</label>
-                                    <input type="text" class="form-control" id="contact-subject" placeholder="Feature suggestion / Route query" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label small text-muted">Message</label>
-                                    <textarea class="form-control" id="contact-message" rows="3" placeholder="Write your message here..." required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary-custom w-100" id="btn-submit-contact">
-                                    <i class="fas fa-paper-plane me-1"></i> Send Message
-                                </button>
-                            </form>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold text-muted">Your Message</label>
+                                        <textarea class="form-control" id="contact-message" rows="3" placeholder="Tell us how we can make RouteWise even more useful for your journeys..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary-custom w-100 py-2" id="btn-submit-contact">
+                                        <i class="fas fa-paper-plane me-2"></i> Send Message
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
