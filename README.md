@@ -28,8 +28,8 @@ An algorithmic, user-friendly web application designed to optimize multi-stop ve
 - **Animated Car Transition Screen**: Full-screen driving animation with road markings and status indicator upon logging in.
 - **Trip Bookmarking**: Save optimized itineraries with full stop list, distance, and costs.
 
-### 5. Developer & About Me Page
-- Full developer profile, tech stack overview, TSP algorithm explanation, and interactive contact feedback form.
+### 5. About & Mission Page
+- RouteWise mission overview, core value pillars, creator background, and interactive community feedback form.
 
 ---
 

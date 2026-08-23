@@ -51,6 +51,20 @@
     --diesel-border: #c7dbfe;
     --cng-color: var(--green);
     --cng-bg: var(--green-soft);
+    --primary-light: #eff6ff;
+    --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #0f172a 100%);
+    --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+
+    /* Fuel Theme Colors */
+    --petrol-color: #e11d48;
+    --petrol-bg: #fff1f2;
+    --petrol-border: #fecdd3;
+    --diesel-color: #0284c7;
+    --diesel-bg: #f0f9ff;
+    --diesel-border: #bae6fd;
+    --cng-color: #10b981;
+    --cng-bg: #ecfdf5;
     --cng-border: #a7f3d0;
     --bg-main: var(--bg);
     --bg-surface: var(--surface);
@@ -490,6 +504,9 @@ input[type="number"].form-control { font-family: var(--mono); font-weight: 600; 
         scroll-behavior: auto !important;
     }
 }
+.custom-toast.toast-success { border-left-color: #10b981; }
+.custom-toast.toast-error   { border-left-color: #ef4444; }
+.custom-toast.toast-warning { border-left-color: #ea580c; }
 
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 991.98px) {

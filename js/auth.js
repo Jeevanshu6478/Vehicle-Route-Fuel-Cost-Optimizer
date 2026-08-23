@@ -5,7 +5,7 @@
  */
 
 // ── Auth State & Registered Accounts Database ─────────────────────
-let currentUser = JSON.parse(localStorage.getItem('routeWiseUser')) || null;
+let currentUser = null;
 
 const DEFAULT_SEED_USERS = [
     { name: "Vikram Kumar", email: "driver@routewise.in", password: "password123", fuel: "cng", mileage: 25 },
