@@ -16,9 +16,9 @@
     --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
 
     /* Fuel Theme Colors */
-    --petrol-color: #f59e0b;
-    --petrol-bg: #fffbeb;
-    --petrol-border: #fde68a;
+    --petrol-color: #e11d48;
+    --petrol-bg: #fff1f2;
+    --petrol-border: #fecdd3;
     --diesel-color: #0284c7;
     --diesel-bg: #f0f9ff;
     --diesel-border: #bae6fd;
@@ -228,7 +228,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .custom-toast.toast-success { border-left-color: #10b981; }
 .custom-toast.toast-error   { border-left-color: #ef4444; }
-.custom-toast.toast-warning { border-left-color: #f59e0b; }
+.custom-toast.toast-warning { border-left-color: #ea580c; }
 
 /* Responsive */
 @media (max-width: 991.98px) {

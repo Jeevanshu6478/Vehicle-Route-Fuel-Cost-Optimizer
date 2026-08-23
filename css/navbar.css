@@ -151,7 +151,7 @@
     padding: 0.25rem 0.7rem;
     border-radius: var(--radius-pill);
 }
-.fuel-pill-petrol { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.fuel-pill-petrol { background: rgba(225,29,72,0.15); color: #fb7185; border: 1px solid rgba(225,29,72,0.3); }
 .fuel-pill-diesel { background: rgba(2,132,199,0.15);  color: #38bdf8; border: 1px solid rgba(2,132,199,0.3); }
 .fuel-pill-cng    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
 
