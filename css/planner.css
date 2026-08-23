@@ -1,245 +1,508 @@
 /*
    ================================================================
-   RouteWise — Route Planner: From-To Input, Map, Results Cards
+   RouteWise — Route Planner: From→To Input, Map Chrome, Results
    ================================================================
 */
 
-/* From-To Journey Input Component */
+/* ── From → To journey input ──────────────────────────────────── */
 .from-to-container {
-    background: #ffffff;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    padding: 1.3rem;
-    box-shadow: var(--shadow-sm);
     position: relative;
+    padding: 16px 16px 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .from-to-row {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 14px;
 }
 
+/* Dashed rule threading the origin dot to the destination dot. */
 .journey-connector-line {
     position: absolute;
-    left: 20px; top: 38px; bottom: 38px;
-    width: 2px;
-    background: repeating-linear-gradient(to bottom, #cbd5e1, #cbd5e1 4px, transparent 4px, transparent 8px);
+    left: 23px;
+    top: 46px;
+    bottom: 42px;
+    width: 1px;
+    background: repeating-linear-gradient(to bottom, #b7c3d1 0 4px, transparent 4px 8px);
     z-index: 1;
 }
 
 .journey-point-box {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
     position: relative;
     z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
 }
 
+/* Waypoint markers are rings, not filled icon chips. */
 .point-icon-badge {
-    width: 38px; height: 38px;
+    width: 15px;
+    height: 15px;
+    margin-bottom: 7px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
+    background: var(--surface);
+    box-shadow: none;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-.point-origin      { background: #2563eb; color: #ffffff; }
-.point-destination { background: #10b981; color: #ffffff; }
+.point-icon-badge i { display: none; }
+.point-origin      { border: 3px solid var(--blue); }
+.point-destination { border: 3px solid var(--green); }
+
+/* Underline inputs — the field is the line, not a box. */
+.journey-point-box .form-label {
+    margin-bottom: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+.journey-point-box .form-control {
+    width: 100%;
+    padding: 4px 34px 7px 0;
+    border: 0;
+    border-bottom: 1px solid var(--strong);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    outline: 0;
+}
+.journey-point-box .form-control:focus {
+    border-bottom-color: var(--blue);
+    outline: 0;
+    box-shadow: none;
+}
+.journey-point-box .form-control::placeholder { font-weight: 400; }
 
 .btn-swap-locations {
     position: absolute;
-    right: 12px; top: 50%;
+    right: 0;
+    top: 50%;
     transform: translateY(-50%);
-    width: 34px; height: 34px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--strong);
     border-radius: 50%;
-    border: 1px solid var(--border-color);
-    background: #ffffff;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-sm);
+    background: var(--surface);
+    color: var(--blue);
+    font-size: 11px;
+    box-shadow: none;
     cursor: pointer;
-    transition: var(--transition-fast);
     z-index: 5;
+    transition: border-color 0.15s ease, color 0.15s ease;
 }
 .btn-swap-locations:hover {
-    background: var(--primary);
-    color: #ffffff;
-    transform: translateY(-50%) rotate(180deg);
+    background: var(--surface);
+    border-color: var(--blue);
+    color: var(--blue);
+    transform: translateY(-50%);
 }
 
-/* Quick City Chips */
-.quick-chips-wrapper { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+/* ── Intermediate stops ───────────────────────────────────────── */
+#stops-counter-badge { font-family: var(--mono); }
+
+#extraStopsCollapse .bg-light {
+    padding: 14px !important;
+    background: var(--alt) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+}
+
+#intermediate-stops-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+}
+#intermediate-stops-list li:last-child { border-bottom: 0; }
+
+/* ── Quick city chips ─────────────────────────────────────────── */
+.quick-chips-wrapper { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+
 .city-chip {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    border-radius: var(--radius-pill);
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 0.22rem 0.65rem;
+    padding: 5px 8px;
+    background: var(--surface);
+    border: 1px solid var(--strong);
+    border-radius: 0;
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-fast);
     user-select: none;
+    transition: var(--transition-fast);
 }
-.city-chip:hover { background: #e2e8f0; color: var(--primary); border-color: #cbd5e1; transform: translateY(-1px); }
+.city-chip i { display: none; }
+.city-chip:hover {
+    background: var(--blue-soft);
+    border-color: var(--blue);
+    color: var(--blue);
+    transform: none;
+}
 
-/* Fuel Type Selector Pills */
+/* ── Fuel type: one segmented control, not four cards ─────────── */
 .fuel-type-selector {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0;
+    margin-bottom: 18px;
+    border: 1px solid var(--strong);
 }
+
 .fuel-btn {
-    border: 1.5px solid var(--border-color);
-    background: #ffffff;
-    border-radius: var(--radius-md);
-    padding: 0.6rem 0.4rem;
-    text-align: center;
-    font-size: 0.82rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 4px;
+    border: 0;
+    border-right: 1px solid var(--strong);
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 11.5px;
     font-weight: 600;
+    text-align: center;
     cursor: pointer;
     transition: var(--transition-fast);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    color: var(--text-muted);
 }
-.fuel-btn i { font-size: 1.1rem; }
-.fuel-btn:hover { border-color: #94a3b8; background: #f8fafc; color: var(--text-main); }
-.fuel-btn.active[data-fuel="petrol"]  { background: var(--petrol-bg);  border-color: var(--petrol-color); color: #b45309; box-shadow: 0 2px 8px rgba(245,158,11,0.2); }
-.fuel-btn.active[data-fuel="diesel"]  { background: var(--diesel-bg);  border-color: var(--diesel-color); color: #0369a1; box-shadow: 0 2px 8px rgba(2,132,199,0.2); }
-.fuel-btn.active[data-fuel="cng"]     { background: var(--cng-bg);     border-color: var(--cng-color);    color: #047857; box-shadow: 0 2px 8px rgba(16,185,129,0.25); }
-.fuel-btn.active[data-fuel="compare"] { background: linear-gradient(135deg, #eff6ff, #f5f3ff); border-color: var(--primary); color: var(--primary); box-shadow: 0 2px 8px rgba(37,99,235,0.2); }
+.fuel-btn:last-child { border-right: 0; }
+.fuel-btn i { font-size: 11px; color: inherit !important; opacity: 0.8; }
+.fuel-btn:hover { background: var(--alt); color: var(--ink); }
 
-/* Map */
+.fuel-btn.active { box-shadow: none; font-weight: 700; }
+.fuel-btn.active[data-fuel="petrol"]  { background: var(--amber-soft); color: var(--amber); }
+.fuel-btn.active[data-fuel="diesel"]  { background: var(--blue-soft);  color: var(--blue); }
+.fuel-btn.active[data-fuel="cng"]     { background: var(--green-soft); color: var(--green); }
+.fuel-btn.active[data-fuel="compare"] { background: var(--ink);        color: #fff; }
+
+/* ── Map ──────────────────────────────────────────────────────── */
 .map-card-wrapper {
     position: relative;
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--strong);
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
+    box-shadow: var(--lift);
 }
-#map { height: 420px; width: 100%; z-index: 1; background: #e5e7eb; }
+#map { height: 460px; width: 100%; z-index: 1; background: #d9e8eb; }
 
+/* Slight desaturation so the route line owns the colour. */
+.leaflet-tile-pane { filter: saturate(0.78) contrast(1.03); }
+.leaflet-container { font-family: var(--sans); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    border-radius: 0;
+    box-shadow: var(--lift);
+}
+.leaflet-popup-content { font-size: 12.5px; margin: 10px 12px; }
+.leaflet-bar, .leaflet-bar a { border-radius: 0 !important; }
+.leaflet-control-attribution { font-family: var(--mono); font-size: 9px !important; }
+
+/* Live distance readout — a light instrument chip, not a dark bar. */
 .map-distance-header-banner {
     position: absolute;
     top: 14px; left: 14px; right: 14px;
     z-index: 450;
-    background: rgba(15,23,42,0.92);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: var(--radius-md);
-    padding: 0.65rem 1rem;
-    color: #ffffff;
-    box-shadow: var(--shadow-lg);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    animation: fadeIn 0.3s ease-out;
+    gap: 8px;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--strong);
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--ink);
+    animation: fadeIn 0.2s ease-out;
 }
-.map-distance-route-title { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+.map-distance-route-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
 .map-distance-pill {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #ffffff;
-    font-size: 0.85rem; font-weight: 800;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-pill);
-    box-shadow: 0 2px 8px rgba(16,185,129,0.4);
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 6px;
+    padding: 4px 9px;
+    background: var(--blue-soft);
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 700;
 }
 
-.map-controls-overlay { position: absolute; bottom: 12px; left: 12px; z-index: 400; display: flex; gap: 0.4rem; }
+.map-controls-overlay {
+    position: absolute;
+    bottom: 14px; left: 14px;
+    z-index: 400;
+    display: flex;
+    gap: 5px;
+}
 .map-control-btn {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 0.35rem 0.65rem;
-    font-size: 0.8rem; font-weight: 600;
-    color: var(--text-main);
-    box-shadow: var(--shadow-sm);
+    padding: 7px 9px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--strong);
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 600;
     cursor: pointer;
     transition: var(--transition-fast);
 }
-.map-control-btn:hover { background: #f8fafc; color: var(--primary); }
+.map-control-btn:hover { background: #fff; border-color: var(--blue); color: var(--blue); }
 
-/* Results Card */
+/* ── Results ──────────────────────────────────────────────────── */
 .results-card-active {
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    border: 1.5px solid #93c5fd;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 10px 25px -5px rgba(37,99,235,0.1);
+    background: var(--surface);
+    border: 1px solid var(--strong);
+    border-radius: 0;
+    box-shadow: none;
 }
+#results-container { padding: 19px; }
 
+/* Headline figure: the one dark surface on the page. */
 .route-distance-hero-box {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: #ffffff;
-    border-radius: var(--radius-md);
-    padding: 1.1rem 1.4rem;
-    margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.8rem;
-    box-shadow: var(--shadow-md);
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 16px 19px;
+    background: var(--ink);
+    border-radius: 0;
+    box-shadow: none;
+    color: #fff;
 }
-.route-distance-hero-title { font-size: 1.1rem; font-weight: 800; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 0.5rem; }
-.route-distance-hero-stat  { text-align: right; }
-.route-distance-large-num  { font-size: 1.6rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #38bdf8; line-height: 1; }
+.route-distance-hero-box .badge.bg-primary {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #93c5fd !important;
+    font-size: 9.5px !important;
+    letter-spacing: 0.08em;
+}
+.route-distance-hero-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 5px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+.route-distance-hero-box .text-light { color: #98a2b3 !important; }
+.route-distance-hero-box small { font-size: 11.5px; }
+.route-distance-hero-box strong { color: #e5e7eb; font-family: var(--mono); font-weight: 600; }
 
-/* Fuel Comparison Cards (within results) */
-.fuel-comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-top: 1rem; }
+.route-distance-hero-stat { text-align: right; }
+.route-distance-large-num {
+    font-family: var(--mono);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #93c5fd;
+}
+.route-distance-large-num .fs-6 { font-size: 13px !important; color: #98a2b3 !important; }
+
+/* Waypoint sequence strip */
+#results-container .bg-light {
+    padding: 10px 12px !important;
+    background: var(--alt) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+}
+#results-container .bg-light .badge { font-size: 10px; }
+
+/* ── Fuel comparison: a bordered matrix, cells share hairlines ── */
+.fuel-comp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 12px;
+    border-top: 1px solid var(--strong);
+    border-left: 1px solid var(--strong);
+}
+
 .fuel-card {
-    border-radius: var(--radius-lg);
-    padding: 1.1rem 0.9rem;
-    text-align: center;
     position: relative;
-    transition: var(--transition-fast);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 12px;
+    padding: 16px 14px;
+    border: 0;
+    border-right: 1px solid var(--strong);
+    border-bottom: 1px solid var(--strong);
+    border-radius: 0;
+    background: var(--surface);
+    text-align: left;
+    transition: background 0.15s ease;
 }
-.fuel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.fuel-card.petrol { background: var(--petrol-bg); border: 2px solid var(--petrol-border); }
-.fuel-card.diesel { background: var(--diesel-bg); border: 2px solid var(--diesel-border); }
-.fuel-card.cng    { background: var(--cng-bg);    border: 2px solid var(--cng-border); box-shadow: 0 4px 14px rgba(16,185,129,0.2); }
-.fuel-card-title  { font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; }
-.fuel-card.petrol .fuel-card-title { color: #b45309; }
-.fuel-card.diesel .fuel-card-title { color: #0369a1; }
-.fuel-card.cng    .fuel-card-title { color: #047857; }
-.fuel-card-cost   { font-size: 1.45rem; font-weight: 900; font-family: 'Outfit', sans-serif; margin-bottom: 0.4rem; }
-.fuel-card.petrol .fuel-card-cost  { color: #d97706; }
-.fuel-card.diesel .fuel-card-cost  { color: #0284c7; }
-.fuel-card.cng    .fuel-card-cost  { color: #10b981; }
-.fuel-card-details-box { background: rgba(255,255,255,0.85); border-radius: var(--radius-sm); padding: 0.6rem; margin-top: 0.4rem; font-size: 0.78rem; text-align: left; display: flex; flex-direction: column; gap: 0.25rem; border: 1px solid rgba(0,0,0,0.05); }
-.fuel-card-row { display: flex; justify-content: space-between; align-items: center; color: #334155; }
-.fuel-card-row strong { font-weight: 700; }
-.fuel-best-badge { position: absolute; top: -10px; right: 12px; background: #10b981; color: #ffffff; font-size: 0.68rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 3px 8px rgba(16,185,129,0.35); }
+.fuel-card:hover { transform: none; box-shadow: none; background: #fcfcfd; }
+.fuel-card.petrol, .fuel-card.diesel { background: var(--surface); }
+/* CNG is the recommendation — the only tinted cell. */
+.fuel-card.cng { background: var(--green-soft); box-shadow: none; }
+.fuel-card.cng:hover { background: #e3f9ef; }
 
-/* Savings Banner */
+.fuel-card-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 7px;
+    margin-bottom: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.fuel-card-title i { font-size: 9.5px; }
+.fuel-card.petrol .fuel-card-title { color: var(--amber); }
+.fuel-card.diesel .fuel-card-title { color: var(--blue); }
+.fuel-card.cng    .fuel-card-title { color: var(--green); }
+
+.fuel-card-cost {
+    margin-bottom: 0;
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+}
+.fuel-card.petrol .fuel-card-cost,
+.fuel-card.diesel .fuel-card-cost { color: var(--ink); }
+.fuel-card.cng    .fuel-card-cost { color: #065f46; }
+
+.fuel-card-details-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 0;
+    padding: 11px 0 0;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    font-size: 11.5px;
+    text-align: left;
+}
+.fuel-card.cng .fuel-card-details-box { border-top-color: #a7f3d0; }
+
+.fuel-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--muted);
+}
+.fuel-card-row strong,
+.fuel-card-row > span + span {
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.fuel-card-row .text-success { color: var(--green) !important; }
+
+.fuel-best-badge {
+    position: absolute;
+    top: 0; right: 0;
+    padding: 3px 6px;
+    background: var(--green);
+    border-radius: 0;
+    box-shadow: none;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+/* ── Savings ──────────────────────────────────────────────────── */
 .savings-banner {
-    background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-    color: #ffffff;
-    border-radius: var(--radius-md);
-    padding: 0.95rem 1.2rem;
-    margin-top: 1.1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 14px rgba(4,120,87,0.25);
-    animation: fadeIn 0.4s ease-out;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 0;
+    padding: 13px 16px;
+    background: var(--green-soft);
+    border: 1px solid #a7f3d0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #065f46;
+    animation: fadeIn 0.25s ease-out;
 }
-.savings-banner-text   { font-size: 0.88rem; font-weight: 500; }
-.savings-banner-amount { font-size: 1.15rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: #a7f3d0; }
+/* When it sits directly under the fuel matrix the two share an edge. */
+.fuel-comp-grid + .savings-banner { border-top: 0; }
+.savings-banner-text { font-size: 12.5px; font-weight: 500; }
+.savings-banner-text strong { font-weight: 700; }
+.savings-banner-amount {
+    color: #065f46;
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+#sim-savings-pct { font-family: var(--mono); font-weight: 700; }
+
+/* ── Simulator output panel (Fuel Comparison view) ────────────── */
+#view-comparison .bg-light.rounded-3 {
+    padding: 19px !important;
+    background: var(--alt) !important;
+    border: 1px solid var(--line) !important;
+}
+#sim-petrol-cost, #sim-diesel-cost, #sim-cng-cost {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink) !important;
+}
+#sim-distance-display { font-family: var(--mono); }
+#calc-dist-val { font-family: var(--mono); }
+#commute-monthly-save, #commute-annual-save {
+    font-family: var(--mono);
+    font-size: 14px !important;
+    border-radius: 0 !important;
+}
+
+/* ── Saved trips list ─────────────────────────────────────────── */
+#saved-routes-list-modal .border {
+    border-color: var(--strong) !important;
+    border-radius: 0 !important;
+}
+#saved-routes-list-modal .rounded-3 { border-radius: 0 !important; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .fuel-type-selector { grid-template-columns: repeat(2, 1fr); }
+    .fuel-btn:nth-child(2) { border-right: 0; }
+    .fuel-btn:nth-child(1), .fuel-btn:nth-child(2) { border-bottom: 1px solid var(--strong); }
+    .route-distance-hero-stat { text-align: left; }
+    .map-distance-header-banner { position: static; margin: 0; border: 0; border-bottom: 1px solid var(--strong); }
+}
