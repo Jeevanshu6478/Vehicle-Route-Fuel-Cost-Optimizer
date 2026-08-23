@@ -53,7 +53,7 @@ function setActiveSection(tabName) {
 }
 
 function switchTab(tabName) {
-    if (typeof currentUser === 'undefined' || !currentUser) return;
+    // Guard removed — guests can navigate sections
 
     setActiveSection(tabName);
 
@@ -103,7 +103,7 @@ window.addEventListener('hashchange', () => {
 function updateActiveOnScroll() {
     spyQueued = false;
     if (Date.now() < spyLockedUntil) return;
-    if (typeof currentUser === 'undefined' || !currentUser) return;
+    // Guard removed — guests see the scroll-spy underline
 
     let current = null;
     for (const name of RW_SECTIONS) {

@@ -63,6 +63,12 @@ document.getElementById('btn-save-current-route')?.addEventListener('click', () 
 
 // ── Open Saved Trips Modal ────────────────────────────────────────
 window.openSavedRoutesModal = () => {
+    // Saved trips require a signed-in account
+    if (!currentUser) {
+        showToast('Saving trips requires a signed-in account.', 'warning');
+        if (typeof showAuthGateway === 'function') showAuthGateway();
+        return;
+    }
     const listEl = document.getElementById('saved-routes-list-modal');
     if (!listEl) return;
 

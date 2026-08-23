@@ -1,0 +1,573 @@
+/*
+   ================================================================
+   RouteWise — Landing Page Styles
+   Five-band section zero above #view-optimizer.
+   Extends the Clean Ops Planner system — no new tokens.
+   ================================================================
+*/
+
+/* ── Band wrapper ────────────────────────────────────────────────── */
+.landing-band {
+    padding: 64px 0;
+}
+.landing-band + .landing-band {
+    border-top: 1px solid var(--line);
+}
+
+/* ── Band 1 · Hero ───────────────────────────────────────────────── */
+#landing-hero {
+    padding: 80px 0 64px;
+    background: var(--bg);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+}
+
+.hero-eyebrow {
+    display: block;
+    margin-bottom: 16px;
+    color: var(--blue);
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.hero-headline {
+    font-family: var(--sans);
+    font-size: clamp(34px, 5vw, 60px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 24px;
+}
+
+.hero-headline .hero-mono {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.hero-sub {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 32px;
+    max-width: 52ch;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--blue);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.hero-btn-primary:hover {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.hero-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--strong);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.hero-btn-secondary:hover {
+    background: var(--alt);
+    border-color: var(--muted);
+    color: var(--ink);
+}
+
+/* Hero map panel — the single --lift on this page */
+.hero-map-panel {
+    border: 1px solid var(--strong);
+    box-shadow: var(--lift);
+    position: relative;
+    background: var(--alt);
+}
+
+#hero-map-container {
+    width: 100%;
+    height: 420px;
+    background: var(--alt);
+}
+
+/* Push the hero tile filter far past the planner's.
+   Scoped to the hero only — does NOT change planner.css:201. */
+#hero-map-container .leaflet-tile-pane {
+    filter: saturate(0.15) contrast(1.05);
+}
+
+#hero-map-container .leaflet-container {
+    font-family: var(--sans);
+    background: var(--alt);
+}
+
+/* ── Band 2 · Proof strip ────────────────────────────────────────── */
+#landing-proof {
+    padding: 36px 0;
+    background: var(--surface);
+}
+
+.proof-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.proof-cell {
+    flex: 1 1 0;
+    min-width: 140px;
+    text-align: center;
+    padding: 16px 20px;
+    border-right: 1px solid var(--line);
+}
+.proof-cell:last-child {
+    border-right: none;
+}
+
+.proof-figure {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.proof-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+}
+
+/* ── Band 3 · How it works ───────────────────────────────────────── */
+#landing-how {
+    background: var(--bg);
+}
+
+.how-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.how-title {
+    font-family: var(--sans);
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 0;
+}
+
+.how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+}
+
+.how-step {
+    padding: 32px 28px;
+    background: var(--surface);
+    border: 1px solid var(--strong);
+    border-right: none;
+}
+.how-step:last-child {
+    border-right: 1px solid var(--strong);
+}
+
+.how-step-number {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--line);
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    line-height: 1;
+}
+
+.how-step-title {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+}
+
+.how-step-body {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* ── Band 4 · The receipt ────────────────────────────────────────── */
+#landing-receipt {
+    background: var(--ink);
+    color: #fff;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.receipt-title {
+    font-family: var(--sans);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0 0 8px;
+}
+
+.receipt-subtitle {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: #98a2b3;
+    margin: 0;
+}
+
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+}
+
+.receipt-table th {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    text-align: right;
+}
+.receipt-table th:first-child {
+    text-align: left;
+}
+
+.receipt-table th.col-petrol { color: var(--amber); }
+.receipt-table th.col-diesel { color: var(--blue); }
+.receipt-table th.col-cng    { color: var(--green); }
+
+.receipt-table td {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: right;
+    color: #e2e8f0;
+}
+.receipt-table td:first-child {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    color: #98a2b3;
+    text-align: left;
+}
+
+.receipt-table tr.receipt-total td {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: none;
+    font-size: 18px;
+    font-weight: 700;
+    padding-top: 16px;
+}
+.receipt-table tr.receipt-total td:first-child {
+    font-size: 14px;
+}
+
+.receipt-table tr.receipt-total td.td-petrol { color: var(--amber); }
+.receipt-table tr.receipt-total td.td-diesel { color: var(--blue); }
+.receipt-table tr.receipt-total td.td-cng    { color: var(--green); }
+
+/* Annual saving callout */
+.receipt-saving {
+    text-align: center;
+    padding: 40px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.receipt-saving-context {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: #98a2b3;
+    margin: 0 0 8px;
+}
+
+.receipt-saving-figure {
+    font-family: var(--mono);
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--green);
+    line-height: 1.1;
+    margin: 0 0 4px;
+}
+
+.receipt-saving-label {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px;
+}
+
+.receipt-saving-note {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: #98a2b3;
+    margin: 0 0 20px;
+    max-width: 50ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.receipt-saving-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--green);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(5, 150, 105, 0.4);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.receipt-saving-cta:hover {
+    background: rgba(5, 150, 105, 0.1);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+/* Progress comparison bar */
+.receipt-compare-bar {
+    max-width: 420px;
+    margin: 24px auto 0;
+}
+
+.receipt-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.receipt-bar-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 60px;
+    text-align: right;
+}
+.receipt-bar-label.label-petrol { color: var(--amber); }
+.receipt-bar-label.label-cng    { color: var(--green); }
+
+.receipt-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt-bar-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.receipt-bar-fill.fill-petrol { background: var(--amber); }
+.receipt-bar-fill.fill-cng    { background: var(--green); }
+
+/* ── Band 5 · Close ──────────────────────────────────────────────── */
+#landing-close {
+    background: var(--bg);
+    text-align: center;
+}
+
+.close-headline {
+    font-family: var(--sans);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 0 0 8px;
+}
+
+.close-sub {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 28px;
+}
+
+/* ── Route polyline tooltip (fixes trap #4) ──────────────────────── */
+.route-polyline-tooltip {
+    background: var(--ink) !important;
+    color: #fff !important;
+    font-family: var(--mono) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border: 1px solid var(--strong) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 6px 10px !important;
+}
+.route-polyline-tooltip::before {
+    border-top-color: var(--ink) !important;
+}
+
+/* ── Hero map city dots ──────────────────────────────────────────── */
+.hero-city-dot {
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Scroll reveal base ──────────────────────────────────────────── */
+.landing-reveal {
+    opacity: 0;
+    transform: translateY(6px);
+}
+.landing-reveal.revealed {
+    animation: fadeIn 0.3s ease-out both;
+}
+
+/* ── Separator above #view-optimizer ─────────────────────────────── */
+#view-landing + #view-optimizer {
+    margin-top: 0;
+    padding-top: 60px;
+    border-top: 1px solid var(--strong);
+}
+
+/* ── Landing section scroll-margin ───────────────────────────────── */
+#view-landing {
+    scroll-margin-top: 78px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    #hero-map-container {
+        height: 300px;
+    }
+
+    .how-grid {
+        grid-template-columns: 1fr;
+    }
+    .how-step {
+        border-right: 1px solid var(--strong);
+        border-bottom: none;
+    }
+    .how-step:last-child {
+        border-bottom: 1px solid var(--strong);
+    }
+
+    .proof-cell {
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #landing-hero {
+        padding: 48px 0 40px;
+    }
+
+    .hero-grid {
+        gap: 24px;
+    }
+
+    #hero-map-container {
+        height: 240px;
+    }
+
+    .proof-row {
+        flex-wrap: wrap;
+    }
+    .proof-cell {
+        flex: 1 1 45%;
+        border-bottom: 1px solid var(--line);
+    }
+    .proof-cell:nth-child(even) {
+        border-right: none;
+    }
+    .proof-cell:last-child,
+    .proof-cell:nth-last-child(2):nth-child(odd) {
+        border-bottom: none;
+    }
+
+    .receipt-table th,
+    .receipt-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+    .receipt-table tr.receipt-total td {
+        font-size: 15px;
+    }
+
+    .landing-band {
+        padding: 48px 0;
+    }
+}
+
+@media (max-width: 359.98px) {
+    .hero-headline {
+        font-size: 28px;
+    }
+    .proof-figure {
+        font-size: 22px;
+    }
+}

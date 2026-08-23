@@ -13,13 +13,12 @@ async function initApp() {
     renderFuelRatesTable();
     updateFuelSimulator();
 
-    // 3. Session restore: if user was logged in, skip auth screen
-    if (currentUser) {
-        unlockApplication();
-    } else {
-        document.getElementById('auth-gateway-view').style.display  = 'flex';
-        document.getElementById('main-app-wrapper').style.display   = 'none';
-    }
+    // 3. Unlock the app for everyone — sign-in is optional now.
+    //    unlockApplication() already self-skips nav prefill when
+    //    currentUser is null, calls initializeMap(), and fires
+    //    invalidateSize().
+    unlockApplication();
+    if (!currentUser) enterGuestMode();
 }
 
 initApp();

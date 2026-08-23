@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/planner.css">
     <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
 
@@ -302,6 +303,189 @@
             <datalist id="city-options">
                 <!-- Populated dynamically from cities.csv -->
             </datalist>
+
+            <!-- ========================================================
+                 VIEW 0: Landing Page (Section Zero)
+                 ======================================================== -->
+            <section id="view-landing">
+
+                <!-- Band 1 · Hero -->
+                <div id="landing-hero" class="landing-band">
+                    <div class="container">
+                        <div class="hero-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">Route planner · India</span>
+                                <h1 class="hero-headline">
+                                    The same drive costs <span class="hero-mono" id="hero-h1-petrol">₹—.—</span> a kilometre on petrol and <span class="hero-mono" id="hero-h1-cng">₹—.—</span> on CNG.
+                                </h1>
+                                <p class="hero-sub">
+                                    RouteWise takes your stops, finds the real road distance between them, and prices the trip three ways. 4,231 Indian cities. No account, nothing leaves your browser.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="#optimizer" class="hero-btn-primary" onclick="switchTab('optimizer')">
+                                        <i class="fas fa-route"></i> Plan a route
+                                    </a>
+                                    <a href="#landing-how" class="hero-btn-secondary">
+                                        <i class="fas fa-arrow-down"></i> See how it works
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="hero-map-side">
+                                <div class="hero-map-panel">
+                                    <div id="hero-map-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Band 2 · Proof strip -->
+                <div id="landing-proof" class="landing-band">
+                    <div class="container">
+                        <div class="proof-row">
+                            <div class="proof-cell">
+                                <div class="proof-figure" id="proof-fig-cities" data-value="4231" data-integer="true">0</div>
+                                <div class="proof-label">Cities</div>
+                            </div>
+                            <div class="proof-cell">
+                                <div class="proof-figure" id="proof-fig-fuels" data-value="3" data-integer="true">0</div>
+                                <div class="proof-label">Fuels Compared</div>
+                            </div>
+                            <div class="proof-cell">
+                                <div class="proof-figure" id="proof-fig-metros" data-value="15" data-integer="true">0</div>
+                                <div class="proof-label">Metro Rate References</div>
+                            </div>
+                            <div class="proof-cell">
+                                <div class="proof-figure" id="proof-fig-keys" data-value="0" data-integer="true">0</div>
+                                <div class="proof-label">API Keys</div>
+                            </div>
+                            <div class="proof-cell">
+                                <div class="proof-figure" id="proof-fig-browser" data-value="100" data-suffix="%" data-integer="true">0</div>
+                                <div class="proof-label">In-Browser</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Band 3 · How it works -->
+                <div id="landing-how" class="landing-band">
+                    <div class="container">
+                        <div class="how-header">
+                            <span class="rw-kicker">How it works</span>
+                            <h2 class="how-title">Three steps, no account required</h2>
+                        </div>
+                        <div class="how-grid">
+                            <div class="how-step">
+                                <div class="how-step-number">01</div>
+                                <div class="how-step-title">Add your stops</div>
+                                <p class="how-step-body">Type any of 4,231 Indian cities, drop pins on the map, or add a metro hub in one click.</p>
+                            </div>
+                            <div class="how-step">
+                                <div class="how-step-number">02</div>
+                                <div class="how-step-title">We find the real distance</div>
+                                <p class="how-step-body">Not straight lines. RouteWise orders your stops and asks OSRM for actual road distance and driving time.</p>
+                            </div>
+                            <div class="how-step">
+                                <div class="how-step-number">03</div>
+                                <div class="how-step-title">Compare all three fuels</div>
+                                <p class="how-step-body">Litres or kilograms needed, total rupees, and cost per kilometre for petrol, diesel and CNG side by side.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Band 4 · The receipt -->
+                <div id="landing-receipt" class="landing-band">
+                    <div class="container">
+                        <div class="receipt-header">
+                            <span class="rw-kicker" style="color: #98a2b3;">Delhi → Jaipur → Mumbai</span>
+                            <h2 class="receipt-title">What the planner actually shows you</h2>
+                            <p class="receipt-subtitle">Three-fuel breakdown for the hero route, at Delhi reference rates.</p>
+                        </div>
+
+                        <table class="receipt-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="col-petrol">Petrol</th>
+                                    <th class="col-diesel">Diesel</th>
+                                    <th class="col-cng">CNG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Distance</td>
+                                    <td>1,157 km</td>
+                                    <td>1,157 km</td>
+                                    <td>1,157 km</td>
+                                </tr>
+                                <tr>
+                                    <td>Fuel needed</td>
+                                    <td>77.1 L</td>
+                                    <td>57.9 L</td>
+                                    <td>46.3 kg</td>
+                                </tr>
+                                <tr>
+                                    <td>Rate applied</td>
+                                    <td>₹94.72 / L</td>
+                                    <td>₹87.62 / L</td>
+                                    <td>₹75.09 / kg</td>
+                                </tr>
+                                <tr>
+                                    <td>Cost per km</td>
+                                    <td>₹6.31</td>
+                                    <td>₹4.38</td>
+                                    <td>₹3.00</td>
+                                </tr>
+                                <tr class="receipt-total">
+                                    <td>Total</td>
+                                    <td class="td-petrol">₹7,303</td>
+                                    <td class="td-diesel">₹5,069</td>
+                                    <td class="td-cng">₹3,474</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="receipt-saving">
+                            <p class="receipt-saving-context">A 40 km commute, 24 days a month</p>
+                            <div class="receipt-saving-figure" id="receipt-annual-save">₹0</div>
+                            <p class="receipt-saving-label">saved a year</p>
+                            <p class="receipt-saving-note">That's petrol versus CNG at today's Delhi rates. Change the distance, mileage and price and watch it move.</p>
+
+                            <div class="receipt-compare-bar">
+                                <div class="receipt-bar-row">
+                                    <span class="receipt-bar-label label-petrol">Petrol</span>
+                                    <div class="receipt-bar-track">
+                                        <div class="receipt-bar-fill fill-petrol" id="receipt-bar-petrol"></div>
+                                    </div>
+                                </div>
+                                <div class="receipt-bar-row">
+                                    <span class="receipt-bar-label label-cng">CNG</span>
+                                    <div class="receipt-bar-track">
+                                        <div class="receipt-bar-fill fill-cng" id="receipt-bar-cng"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="#comparison" class="receipt-saving-cta" onclick="switchTab('comparison')" style="margin-top: 24px;">
+                                <i class="fas fa-calculator"></i> Open the savings calculator
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Band 5 · Close -->
+                <div id="landing-close" class="landing-band">
+                    <div class="container">
+                        <h2 class="close-headline">Ready when you are.</h2>
+                        <p class="close-sub">No sign-up, no API key, no data leaving your browser.</p>
+                        <a href="#optimizer" class="hero-btn-primary" onclick="switchTab('optimizer')">
+                            <i class="fas fa-route"></i> Plan a route
+                        </a>
+                    </div>
+                </div>
+
+            </section>
 
             <!-- ========================================================
                  VIEW 1: Route Planner (From -> To Journey & Distance Map)
@@ -965,6 +1149,7 @@
     <script src="js/map.js"></script>
     <script src="js/fuel.js"></script>
     <script src="js/saved-routes.js"></script>
+    <script src="js/landing.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

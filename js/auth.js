@@ -182,6 +182,7 @@ function unlockApplication() {
     if (typeof initializeMap === 'function') initializeMap();
     setTimeout(() => { if (typeof map !== 'undefined' && map) map.invalidateSize(); }, 200);
     if (typeof updateSavedCountBadge === 'function') updateSavedCountBadge();
+    if (typeof initLandingSequence === 'function') initLandingSequence();
 }
 
 // ── Logout ───────────────────────────────────────────────────────
@@ -204,5 +205,45 @@ window.logoutUser = () => {
 
     setGatewayAuthMode('signin');
     showToast("Signed out successfully from RouteWise", "info");
+};
+
+// ── Guest Mode ───────────────────────────────────────────────────
+window.enterGuestMode = () => {
+    // Nav dropdown: guest state
+    const navName    = document.getElementById('nav-user-name');
+    const navAvatar  = document.getElementById('nav-user-avatar');
+    const navEmail   = document.getElementById('nav-user-email');
+    const navVehicle = document.getElementById('nav-user-vehicle');
+    if (navName)    navName.textContent    = 'Guest';
+    if (navAvatar)  navAvatar.textContent  = 'G';
+    if (navEmail)   navEmail.textContent   = 'Not signed in';
+    if (navVehicle) navVehicle.textContent = 'Vehicle: CNG (25 km/kg) · defaults';
+
+    // Dropdown header: change "Active Session" → "Guest"
+    const dropHeader = document.querySelector('#auth-nav-container .dropdown-header');
+    if (dropHeader) dropHeader.textContent = 'Guest';
+
+    // Hide the "Sign Out" link for guests (leave it in DOM)
+    const signOutLink = document.querySelector('#auth-nav-container a[onclick="logoutUser()"]');
+    if (signOutLink) signOutLink.style.display = 'none';
+
+    // Add a "Sign in" link for guests (only if not already added)
+    if (!document.getElementById('guest-sign-in-link')) {
+        const signInLi = document.createElement('li');
+        signInLi.id = 'guest-sign-in-link';
+        signInLi.innerHTML = '<a class="dropdown-item text-primary" href="#" onclick="showAuthGateway()"><i class="fas fa-sign-in-alt me-2"></i>Sign in</a>';
+        // Insert after the divider, before the saved-trips link
+        const dropMenu = document.querySelector('#auth-nav-container .dropdown-menu');
+        if (dropMenu) dropMenu.appendChild(signInLi);
+    }
+};
+
+// ── Auth Gateway (re-show sign-in forms) ─────────────────────────
+window.showAuthGateway = () => {
+    const authGateway = document.getElementById('auth-gateway-view');
+    if (authGateway) {
+        authGateway.style.display = 'flex';
+        setGatewayAuthMode('signin');
+    }
 };
 
