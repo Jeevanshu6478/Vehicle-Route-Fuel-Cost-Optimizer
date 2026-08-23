@@ -1,204 +1,965 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="RouteWise signup, route planner, and fuel cost optimizer in plain HTML, CSS, and JavaScript." />
-    <title>RouteWise | Smart Travel Planner</title>
-    <link rel="stylesheet" href="./style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-  </head>
-  <body>
-    <nav class="navbar" id="navbar">
-      <div class="navbar-container">
-        <div class="navbar-brand">RouteWise</div>
-        <div class="navbar-menu" id="navbar-menu">
-          <button type="button" class="nav-link active" data-page="dashboard">Dashboard</button>
-          <button type="button" class="nav-link" data-page="about">About Me</button>
-        </div>
-      </div>
-    </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RouteWise - Smart Vehicle Route & Multi-Fuel Cost Optimizer. Plan From-to journeys across India and compare Petrol, Diesel, and CNG travel costs.">
+    <title>RouteWise - Vehicle Route & Fuel Cost Optimizer</title>
+    
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for Map Rendering -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- RouteWise Modular CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/planner.css">
+    <link rel="stylesheet" href="css/sections.css">
+</head>
+<body>
 
-    <main class="page-shell">
-      <!-- AUTH VIEW -->
-      <section id="auth-view" class="auth-shell">
-        <div class="brand-panel">
-          <span class="brand-pill">RouteWise</span>
-          <h1>Plan better trips.</h1>
-          <p>Log in, optimize your travel route, and compare petrol, diesel, and CNG costs before you hit the road.</p>
-          <ul class="feature-list">
-            <li>Fast route planning</li>
-            <li>Fuel price comparison</li>
-            <li>Trip optimization dashboard</li>
-          </ul>
-        </div>
-
-        <div class="auth-panel">
-          <div class="tab-group" aria-label="Authentication tabs">
-            <button type="button" class="tab-button active" data-mode="login">Login</button>
-            <button type="button" class="tab-button" data-mode="signup">Sign Up</button>
-          </div>
-
-          <h2 id="auth-title">Welcome back</h2>
-
-          <form id="auth-form" novalidate>
-            <label id="name-field" class="field hidden">
-              <span>Full name</span>
-              <input id="name-input" type="text" placeholder="Jane Doe" />
-            </label>
-
-            <label class="field">
-              <span>Email</span>
-              <input id="email-input" type="email" placeholder="you@example.com" />
-            </label>
-
-            <label class="field">
-              <span>Password</span>
-              <input id="password-input" type="password" placeholder="Enter password" />
-            </label>
-
-            <div id="auth-message" class="auth-message hidden"></div>
-
-            <button id="auth-submit" type="submit" class="primary-button full-width">Log In</button>
-          </form>
-        </div>
-      </section>
-
-      <!-- DASHBOARD VIEW -->
-      <section id="dashboard-view" class="dashboard hidden">
-        <header class="topbar">
-          <div>
-            <p class="mini-label">Smart route & fuel planner</p>
-            <h2>Welcome, <span id="user-name">Traveler</span></h2>
-          </div>
-          <button id="logout-btn" type="button" class="secondary-button">Log Out</button>
-        </header>
-
-        <div class="dashboard-grid">
-          <section class="panel route-panel">
-            <div class="panel-header">
-              <h3>Route planner</h3>
-              <span class="pill">Trip builder</span>
+    <!-- ================================================================
+         1. Post-Login Car Drive-in Animation Overlay
+         ================================================================ -->
+    <div id="car-transition-overlay">
+        <div class="car-anim-scene">
+            <div class="car-exhaust-smoke"></div>
+            
+            <div class="anim-car-vehicle">
+                <svg class="car-svg-icon" viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="100" cy="82" rx="75" ry="6" fill="rgba(0,0,0,0.4)"/>
+                    <path d="M20,62 L32,38 C35,32 42,28 50,28 L115,28 C125,28 135,33 148,46 L175,50 C182,51 188,57 188,65 L188,70 C188,73 185,75 182,75 L18,75 C15,75 12,72 12,68 L12,65 C12,63 15,62 20,62 Z" fill="#2563eb"/>
+                    <path d="M52,32 L68,10 C72,5 78,3 85,3 L125,3 C132,3 138,7 142,14 L158,32 Z" fill="#1e293b"/>
+                    <path d="M58,30 L72,12 C74,9 78,8 82,8 L100,8 L100,30 Z" fill="#93c5fd" opacity="0.85"/>
+                    <path d="M106,8 L124,8 C128,8 132,10 135,14 L148,30 L106,30 Z" fill="#93c5fd" opacity="0.85"/>
+                    <polygon points="182,56 188,56 186,64 180,64" fill="#fbbf24"/>
+                    <polygon points="188,58 260,40 260,80 188,64" fill="rgba(251, 191, 36, 0.25)"/>
+                    <rect x="12" y="58" width="6" height="8" rx="2" fill="#ef4444"/>
+                    <g class="car-wheel" style="transform-origin: 48px 72px;">
+                        <circle cx="48" cy="72" r="14" fill="#0f172a" stroke="#cbd5e1" stroke-width="3"/>
+                        <circle cx="48" cy="72" r="6" fill="#64748b"/>
+                        <line x1="48" y1="58" x2="48" y2="86" stroke="#94a3b8" stroke-width="2"/>
+                        <line x1="34" y1="72" x2="62" y2="72" stroke="#94a3b8" stroke-width="2"/>
+                    </g>
+                    <g class="car-wheel" style="transform-origin: 154px 72px;">
+                        <circle cx="154" cy="72" r="14" fill="#0f172a" stroke="#cbd5e1" stroke-width="3"/>
+                        <circle cx="154" cy="72" r="6" fill="#64748b"/>
+                        <line x1="154" y1="58" x2="154" y2="86" stroke="#94a3b8" stroke-width="2"/>
+                        <line x1="140" y1="72" x2="168" y2="72" stroke="#94a3b8" stroke-width="2"/>
+                    </g>
+                </svg>
             </div>
 
-            <form id="route-form" class="route-form">
-              <!-- 🌟 ADDED DATALIST FOR CSV AUTOCOMPLETE -->
-              <datalist id="city-options"></datalist>
+            <div class="anim-road">
+                <div class="anim-road-stripes"></div>
+            </div>
+        </div>
 
-              <label class="field">
-                <span>Start location</span>
-                <input id="start-location" type="text" list="city-options" placeholder="Delhi" />
-              </label>
+        <div class="anim-status-box">
+            <h4 class="fw-bold mb-1" id="car-anim-title">Starting Your Engine...</h4>
+            <p class="text-light opacity-75 small mb-0" id="car-anim-subtitle">Calibrating Indian Highway Networks & Fuel Prices</p>
+            <div class="anim-progress-bar">
+                <div class="anim-progress-fill" id="car-anim-progress"></div>
+            </div>
+        </div>
+    </div>
 
-              <label class="field">
-                <span>Destination</span>
-                <input id="destination-location" type="text" list="city-options" placeholder="Chandigarh" />
-              </label>
+    <!-- ================================================================
+         2. AUTH GATEWAY VIEW (Displayed first when not logged in)
+         ================================================================ -->
+    <div id="auth-gateway-view">
+        <div class="container d-flex justify-content-center">
+            <div class="auth-portal-card row g-0 animate-pop">
+                
+                <!-- Left Side: Hero & Value Proposition -->
+                <div class="col-lg-5 auth-hero-side">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <span class="brand-icon-wrapper"><i class="fas fa-route"></i></span>
+                            <span class="fs-4 fw-bold text-white">Route<span class="text-success">Wise</span></span>
+                        </div>
+                        <h2 class="fw-bold mb-3 text-white">From ➔ To Journey & Fuel Cost Calculator</h2>
+                        <p class="text-light opacity-80 small mb-4">
+                            Calculate exact highway distances across 4,000+ Indian cities and compare real-time fuel quantities (Litres/kg) and prices across Petrol, Diesel, and CNG.
+                        </p>
+                        
+                        <div class="d-flex flex-column gap-2 mb-4">
+                            <div class="d-flex align-items-center gap-2 small text-light">
+                                <i class="fas fa-check-circle text-success"></i> <span>Live Road Distance on Map (km)</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 small text-light">
+                                <i class="fas fa-check-circle text-success"></i> <span>Petrol vs Diesel vs CNG Amount & Cost</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 small text-light">
+                                <i class="fas fa-check-circle text-success"></i> <span>15+ Indian Metro Reference Rates</span>
+                            </div>
+                        </div>
+                    </div>
 
-              <div class="stops-box">
-                <div class="stops-header">
-                  <span>Stops</span>
-                  <button type="button" id="add-stop-btn" class="ghost-button">+ Add Stop</button>
+                    <div class="p-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10">
+                        <div class="d-flex justify-content-between align-items-center small text-light mb-1">
+                            <span>Today's Reference Rates:</span>
+                            <span class="badge bg-success">Live</span>
+                        </div>
+                        <div class="d-flex justify-content-between small fw-bold text-white">
+                            <span>Petrol: ₹94.7</span>
+                            <span>Diesel: ₹87.6</span>
+                            <span>CNG: ₹75.1</span>
+                        </div>
+                    </div>
                 </div>
-                <div id="stop-list" class="stop-list"></div>
-              </div>
 
-              <button type="submit" class="primary-button">Optimize Route</button>
-            </form>
+                <!-- Right Side: Sign In / Sign Up Form -->
+                <div class="col-lg-7 auth-form-side">
+                    <div class="auth-pill-switch">
+                        <button class="auth-pill-btn active" id="gateway-tab-signin" onclick="setGatewayAuthMode('signin')">
+                            <i class="fas fa-sign-in-alt me-1"></i> Sign In
+                        </button>
+                        <button class="auth-pill-btn" id="gateway-tab-signup" onclick="setGatewayAuthMode('signup')">
+                            <i class="fas fa-user-plus me-1"></i> Create Account
+                        </button>
+                    </div>
 
-            <div id="route-status" class="route-status hidden"></div>
-          </section>
+                    <!-- SIGN IN FORM -->
+                    <form id="gateway-signin-form">
+                        <h4 class="fw-bold text-dark mb-1">Welcome to RouteWise!</h4>
+                        <p class="text-muted small mb-4">Log in to compute road distances, map routes, and calculate fuel economics.</p>
 
-          <section class="panel fuel-panel">
-            <div class="panel-header">
-              <h3>Fuel cost optimizer</h3>
-              <span class="pill">Live estimate</span>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Email or Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-envelope text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="gateway-signin-email" placeholder="Enter your email or username" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-lock text-muted"></i></span>
+                                <input type="password" class="form-control border-start-0" id="gateway-signin-password" placeholder="Enter your password" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="gateway-remember" checked>
+                                <label class="form-check-label small text-muted" for="gateway-remember">Remember me</label>
+                            </div>
+                            <a href="#" class="small text-decoration-none text-primary" onclick="showToast('If you don\'t have an account, click Create Account above to register!', 'info')">Need help?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100 py-2 fs-6 mb-3">
+                            <i class="fas fa-key me-2"></i> Log In & Launch RouteWise
+                        </button>
+                    </form>
+
+                    <!-- SIGN UP FORM -->
+                    <form id="gateway-signup-form" style="display: none;">
+                        <h4 class="fw-bold text-dark mb-1">Create Your RouteWise Account</h4>
+                        <p class="text-muted small mb-3">Start calculating From-to highway distances and fuel prices.</p>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-user text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="gateway-signup-name" placeholder="Rajesh Kumar" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-envelope text-muted"></i></span>
+                                <input type="email" class="form-control border-start-0" id="gateway-signup-email" placeholder="rajesh@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold text-muted">Fuel Type</label>
+                                <select class="form-select" id="gateway-signup-fuel">
+                                    <option value="cng" selected>CNG </option>
+                                    <option value="petrol">Petrol </option>
+                                    <option value="diesel">Diesel </option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold text-muted">Vehicle Mileage</label>
+                                <input type="number" class="form-control" id="gateway-signup-mileage" value="24" min="1">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-lock text-muted"></i></span>
+                                <input type="password" class="form-control border-start-0" id="gateway-signup-password" placeholder="Create password" required minlength="4">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success-custom w-100 py-2 fs-6">
+                            <i class="fas fa-user-check me-2"></i> Register & Open RouteWise
+                        </button>
+                    </form>
+
+                </div>
+
             </div>
+        </div>
+    </div>
 
-            <div class="distance-row">
-              <label class="field compact-field">
-                <span>Distance (km)</span>
-                <!-- Disabled so user can't manually override real OSRM distances -->
-                <input id="distance-input" type="number" min="1" step="1" value="0" disabled style="background:#e2e8f0; cursor:not-allowed;" />
-              </label>
+    <!-- ================================================================
+         3. MAIN APPLICATION (Unlocked after Login)
+         ================================================================ -->
+    <div id="main-app-wrapper" style="display: none;">
+        
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#optimizer" id="brand-logo">
+                    <span class="brand-icon-wrapper"><i class="fas fa-route"></i></span>
+                    <span>Route<span class="text-success">Wise</span></span>
+                </a>
+
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#optimizer" id="nav-btn-optimizer">
+                                <i class="fas fa-map-marked-alt text-primary"></i> Route Planner
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#comparison" id="nav-btn-comparison">
+                                <i class="fas fa-balance-scale text-warning"></i> Fuel Comparison
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#rates" id="nav-btn-rates">
+                                <i class="fas fa-gas-pump text-info"></i> City Fuel Rates
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about" id="nav-btn-about">
+                                <i class="fas fa-user-circle text-success"></i> About Me
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <div class="nav-fuel-ticker d-none d-lg-flex" title="Reference Average Metro Rates">
+                            <span class="ticker-dot"></span>
+                            <span>⛽ <strong>Petrol:</strong> ₹94.7</span>
+                            <span>|</span>
+                            <span><strong>Diesel:</strong> ₹87.6</span>
+                            <span>|</span>
+                            <span><strong>CNG:</strong> ₹75.1</span>
+                        </div>
+
+                        <!-- User Profile Dropdown -->
+                        <div id="auth-nav-container">
+                            <div class="dropdown">
+                                <div class="user-profile-badge dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="user-avatar-mini" id="nav-user-avatar">U</span>
+                                    <span class="d-none d-sm-inline" id="nav-user-name">User</span>
+                                </div>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    <li><h6 class="dropdown-header">Active Session</h6></li>
+                                    <li><span class="dropdown-item-text small text-muted" id="nav-user-email">user@routewise.in</span></li>
+                                    <li><span class="dropdown-item-text small fw-bold" id="nav-user-vehicle">Vehicle: CNG (25 km/kg)</span></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-primary" href="#" onclick="openSavedRoutesModal()"><i class="fas fa-bookmark me-2"></i>My Saved Trips</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </nav>
 
-            <div id="fuel-cards" class="fuel-cards"></div>
+        <!-- ============================================================
+             MAIN CONTENT TABS
+             ============================================================ -->
+        <main class="container my-4 flex-grow-1">
+            
+            <datalist id="city-options">
+                <!-- Populated dynamically from cities.csv -->
+            </datalist>
 
-            <div class="mileage-grid">
-              <label class="field">
-                <span>Petrol mileage</span>
-                <input id="petrol-mileage" class="mileage-input" type="number" min="5" step="0.5" value="14" />
-              </label>
+            <!-- ========================================================
+                 VIEW 1: Route Planner (From -> To Journey & Distance Map)
+                 ======================================================== -->
+            <section id="view-optimizer" class="tab-view-container active-tab">
+                
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h3 class="mb-1 fw-bold text-dark">🚗 From ➔ To Route & Multi-Fuel Price Calculator</h3>
+                        <p class="text-muted small mb-0">Type where you want to start from and where you want to go. The map will display the exact road distance and full Petrol, Diesel, and CNG amounts & costs.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary" id="btn-quick-delhi-mumbai">
+                            <i class="fas fa-magic me-1"></i> Demo: Delhi → Mumbai
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="btn-show-saved-routes">
+                            <i class="fas fa-bookmark me-1"></i> Saved Trips (<span id="saved-count-badge">0</span>)
+                        </button>
+                    </div>
+                </div>
 
-              <label class="field">
-                <span>Diesel mileage</span>
-                <input id="diesel-mileage" class="mileage-input" type="number" min="5" step="0.5" value="16" />
-              </label>
+                <div class="row g-4">
+                    
+                    <!-- Left Column: From / To Inputs & Vehicle Config -->
+                    <div class="col-lg-5">
+                        
+                        <!-- CARD: Journey Planner (From -> To) -->
+                        <div class="glass-card mb-4 animate-fade-in">
+                            <div class="card-header-custom">
+                                <div>
+                                    <span class="section-tag"><i class="fas fa-map-marked-alt"></i> Step 1: Select Journey Places</span>
+                                    <h5 class="m-0 fw-bold"><i class="fas fa-location-arrow text-primary me-2"></i>From Where to Where?</h5>
+                                </div>
+                            </div>
+                            <div class="card-body-custom">
+                                
+                                <div class="from-to-container mb-3">
+                                    <div class="journey-connector-line"></div>
+                                    
+                                    <div class="from-to-row">
+                                        <!-- Origin (From) -->
+                                        <div class="journey-point-box">
+                                            <div class="point-icon-badge point-origin" title="Starting Point (Origin)">
+                                                <i class="fas fa-circle"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <label class="form-label small fw-semibold text-muted mb-1">From: Starting Place / City</label>
+                                                <input class="form-control" list="city-options" id="origin-city-input" placeholder="Type starting place (e.g. Delhi)..." value="Delhi">
+                                            </div>
+                                        </div>
 
-              <label class="field">
-                <span>CNG mileage</span>
-                <input id="cng-mileage" class="mileage-input" type="number" min="5" step="0.5" value="20" />
-              </label>
+                                        <!-- Destination (To) -->
+                                        <div class="journey-point-box">
+                                            <div class="point-icon-badge point-destination" title="Final Destination">
+                                                <i class="fas fa-flag-checkered"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <label class="form-label small fw-semibold text-muted mb-1">To: Destination Place / City</label>
+                                                <input class="form-control" list="city-options" id="dest-city-input" placeholder="Type destination place (e.g. Mumbai)..." value="Mumbai">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Swap Button -->
+                                    <button class="btn-swap-locations" id="btn-swap-from-to" title="Swap Origin & Destination">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Intermediate Stops Collapsible -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#extraStopsCollapse" aria-expanded="false">
+                                            <i class="fas fa-plus-circle me-1"></i> Add Intermediate Stops / Via Cities
+                                        </button>
+                                        <span class="badge bg-light text-muted border" id="stops-counter-badge">2 places</span>
+                                    </div>
+                                    
+                                    <div class="collapse" id="extraStopsCollapse">
+                                        <div class="p-3 bg-light rounded-3 border">
+                                            <label class="form-label small fw-semibold text-muted">Add Via City</label>
+                                            <div class="input-group mb-2">
+                                                <input class="form-control form-control-sm" list="city-options" id="intermediate-city-input" placeholder="Search intermediate city (e.g. Jaipur)...">
+                                                <button class="btn btn-sm btn-primary-custom" id="btn-add-intermediate">
+                                                    <i class="fas fa-plus"></i> Add Stop
+                                                </button>
+                                            </div>
+                                            <ul class="list-unstyled mb-0" id="intermediate-stops-list">
+                                                <!-- Injected dynamically -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Add City Chips -->
+                                <div>
+                                    <small class="text-muted d-block fw-semibold mb-1" style="font-size: 0.75rem;">⚡ Quick Add Place Hubs:</small>
+                                    <div class="quick-chips-wrapper" id="quick-city-chips">
+                                        <span class="city-chip" data-city="Delhi"><i class="fas fa-plus-circle text-muted me-1"></i>Delhi</span>
+                                        <span class="city-chip" data-city="Mumbai"><i class="fas fa-plus-circle text-muted me-1"></i>Mumbai</span>
+                                        <span class="city-chip" data-city="Bengaluru"><i class="fas fa-plus-circle text-muted me-1"></i>Bengaluru</span>
+                                        <span class="city-chip" data-city="Jaipur"><i class="fas fa-plus-circle text-muted me-1"></i>Jaipur</span>
+                                        <span class="city-chip" data-city="Chandigarh"><i class="fas fa-plus-circle text-muted me-1"></i>Chandigarh</span>
+                                        <span class="city-chip" data-city="Kolkata"><i class="fas fa-plus-circle text-muted me-1"></i>Kolkata</span>
+                                        <span class="city-chip" data-city="Hyderabad"><i class="fas fa-plus-circle text-muted me-1"></i>Hyderabad</span>
+                                        <span class="city-chip" data-city="Pune"><i class="fas fa-plus-circle text-muted me-1"></i>Pune</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- CARD: Fuel Parameters -->
+                        <div class="glass-card mb-4 animate-fade-in" style="animation-delay: 0.1s;">
+                            <div class="card-header-custom">
+                                <div>
+                                    <span class="section-tag" style="background:#ecfdf5; color:#059669;"><i class="fas fa-gas-pump"></i> Step 2: Fuel Economics</span>
+                                    <h5 class="m-0 fw-bold"><i class="fas fa-sliders-h text-success me-2"></i>Vehicle & Fuel Rates</h5>
+                                </div>
+                            </div>
+                            <div class="card-body-custom">
+                                
+                                <label class="form-label small fw-semibold text-muted mb-2">Primary Vehicle Fuel</label>
+                                <div class="fuel-type-selector" id="fuel-type-selector">
+                                    <div class="fuel-btn" data-fuel="petrol">
+                                        <i class="fas fa-gas-pump text-warning"></i>
+                                        <span>Petrol</span>
+                                    </div>
+                                    <div class="fuel-btn" data-fuel="diesel">
+                                        <i class="fas fa-truck text-info"></i>
+                                        <span>Diesel</span>
+                                    </div>
+                                    <div class="fuel-btn active" data-fuel="cng">
+                                        <i class="fas fa-leaf text-success"></i>
+                                        <span>CNG</span>
+                                    </div>
+                                    <div class="fuel-btn" data-fuel="compare">
+                                        <i class="fas fa-layer-group text-primary"></i>
+                                        <span>Compare All</span>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label small fw-semibold text-muted" id="eff-label">Mileage (km/kg)</label>
+                                        <div class="input-group">
+                                            <input type="number" id="fuel-efficiency" class="form-control" value="25" step="0.5" min="1">
+                                            <span class="input-group-text bg-light text-muted small" id="eff-unit">km/kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small fw-semibold text-muted" id="price-label">Fuel Price (₹/kg)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted">₹</span>
+                                            <input type="number" id="fuel-price" class="form-control" value="75.09" step="0.1" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-muted">Auto-Fetch Price from Metro City</label>
+                                    <select class="form-select form-select-sm" id="city-rate-sync-select">
+                                        <option value="delhi">New Delhi (Petrol: ₹94.72 | Diesel: ₹87.62 | CNG: ₹75.09)</option>
+                                        <option value="mumbai">Mumbai (Petrol: ₹104.21 | Diesel: ₹92.15 | CNG: ₹76.00)</option>
+                                        <option value="bengaluru">Bengaluru (Petrol: ₹102.86 | Diesel: ₹88.94 | CNG: ₹82.50)</option>
+                                        <option value="kolkata">Kolkata (Petrol: ₹103.94 | Diesel: ₹90.76 | CNG: ₹86.00)</option>
+                                        <option value="chennai">Chennai (Petrol: ₹100.75 | Diesel: ₹92.34 | CNG: ₹83.50)</option>
+                                        <option value="hyderabad">Hyderabad (Petrol: ₹107.41 | Diesel: ₹95.65 | CNG: ₹89.50)</option>
+                                        <option value="pune">Pune (Petrol: ₹103.77 | Diesel: ₹90.31 | CNG: ₹78.00)</option>
+                                        <option value="custom">Custom User Price</option>
+                                    </select>
+                                </div>
+
+                                <!-- Action Button -->
+                                <button id="optimize-btn" class="btn btn-success-custom w-100 py-2 fs-6">
+                                    <i class="fas fa-bolt me-2"></i> Calculate Distance & Fuel Prices
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Interactive Map with Distance & Results -->
+                    <div class="col-lg-7">
+                        
+                        <!-- Map Card with Live Distance Header -->
+                        <div class="glass-card mb-4 p-0 overflow-hidden animate-fade-in">
+                            <div class="map-card-wrapper">
+                                
+                                <!-- Floating Live Distance Banner on Map -->
+                                <div class="map-distance-header-banner" id="map-distance-banner" style="display: none;">
+                                    <div class="map-distance-route-title" id="map-route-title">
+                                        <i class="fas fa-map-marker-alt text-danger"></i>
+                                        <span>Delhi ➔ Mumbai</span>
+                                    </div>
+                                    <div class="map-distance-pill" id="map-route-dist-pill">
+                                        <i class="fas fa-road"></i>
+                                        <span id="map-dist-val">0 km</span>
+                                    </div>
+                                </div>
+
+                                <div id="map"></div>
+
+                                <div class="map-controls-overlay">
+                                    <button class="map-control-btn" id="btn-fit-map" title="Fit all markers in view">
+                                        <i class="fas fa-expand"></i> Reset View
+                                    </button>
+                                    <button class="map-control-btn" id="btn-reverse-route" title="Reverse route">
+                                        <i class="fas fa-exchange-alt"></i> Reverse
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Route Results & Multi-Fuel Comparison Matrix -->
+                        <div class="glass-card mb-4 results-card-active animate-fade-in" id="results-card">
+                            <div class="card-header-custom bg-transparent border-bottom">
+                                <div class="d-flex align-items-center justify-content-between w-100">
+                                    <h6 class="m-0 fw-bold text-success"><i class="fas fa-flag-checkered me-2"></i>Trip Distance, Fuel Amount & Price Breakdown</h6>
+                                    <button class="btn btn-sm btn-outline-primary" id="btn-save-current-route">
+                                        <i class="fas fa-save me-1"></i> Save Trip
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body-custom" id="results-container">
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-route fa-2x text-muted mb-2 opacity-50"></i>
+                                    <p class="mb-0">Enter your <strong>From (Starting Place)</strong> and <strong>To (Destination)</strong> places and click <strong>Calculate Distance & Fuel Prices</strong> to compute the exact road distance, amount of fuel required, and total price of Petrol, Diesel, and CNG.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ========================================================
+                 VIEW 2: Fuel Price Comparison Engine & Calculator
+                 ======================================================== -->
+            <section id="view-comparison" class="tab-view-container">
+                
+                <div class="comp-hero">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <span class="badge bg-success text-white px-3 py-1 rounded-pill mb-2"><i class="fas fa-gas-pump me-1"></i> Multi-Fuel Cost Intelligence</span>
+                            <h2 class="fw-bold mb-2">Petrol vs Diesel vs CNG Price Analytics</h2>
+                            <p class="text-light opacity-75 mb-0">Compare fuel economics, compute per-kilometer travel costs, measure environmental impact, and calculate maximum savings for any trip distance.</p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                            <a href="#optimizer" class="btn btn-light fw-bold px-4 py-2" onclick="switchTab('optimizer')">
+                                <i class="fas fa-map-marked-alt text-primary me-1"></i> Plan a Journey Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Overview Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="glass-card h-100 p-4 border-top border-warning border-4 animate-fade-in">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-warning text-dark fw-bold px-2 py-1"><i class="fas fa-gas-pump me-1"></i> Petrol</span>
+                                <span class="text-muted small">Standard</span>
+                            </div>
+                            <h3 class="fw-bold text-dark mb-1">₹94.72 - ₹107.41 <span class="fs-6 fw-normal text-muted">/ Litre</span></h3>
+                            <p class="text-muted small mb-3">Higher price per litre, average mileage of 14 - 18 km/L in passenger cars.</p>
+                            <div class="p-3 bg-light rounded-3 mb-3">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Typical Running Cost:</span>
+                                    <strong class="text-dark">₹6.31 / km</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>CO₂ Emissions:</span>
+                                    <span class="badge bg-danger text-white">~2.31 kg / L</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="glass-card h-100 p-4 border-top border-info border-4 animate-fade-in" style="animation-delay: 0.1s;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-info text-white fw-bold px-2 py-1"><i class="fas fa-truck me-1"></i> Diesel</span>
+                                <span class="text-muted small">High Mileage</span>
+                            </div>
+                            <h3 class="fw-bold text-dark mb-1">₹87.62 - ₹95.65 <span class="fs-6 fw-normal text-muted">/ Litre</span></h3>
+                            <p class="text-muted small mb-3">Lower price than petrol with higher torque and 18 - 24 km/L highway mileage.</p>
+                            <div class="p-3 bg-light rounded-3 mb-3">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Typical Running Cost:</span>
+                                    <strong class="text-dark">₹4.38 / km</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>CO₂ Emissions:</span>
+                                    <span class="badge bg-warning text-dark">~2.68 kg / L</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="glass-card h-100 p-4 border-top border-success border-4 shadow-sm animate-fade-in" style="animation-delay: 0.2s; box-shadow: var(--shadow-glow-cng);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-success text-white fw-bold px-2 py-1"><i class="fas fa-leaf me-1"></i> CNG (Green Fuel)</span>
+                                <span class="badge bg-success-subtle text-success border border-success">Most Economical ⭐</span>
+                            </div>
+                            <h3 class="fw-bold text-dark mb-1">₹75.09 - ₹89.50 <span class="fs-6 fw-normal text-muted">/ kg</span></h3>
+                            <p class="text-muted small mb-3">Lowest price and highest fuel efficiency of 22 - 28 km/kg in factory kits.</p>
+                            <div class="p-3 bg-light rounded-3 mb-3">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Typical Running Cost:</span>
+                                    <strong class="text-success fw-bold">₹3.00 / km</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>CO₂ Emissions:</span>
+                                    <span class="badge bg-success text-white">~1.85 kg / kg (Lowest)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance Slider Simulator -->
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1"><i class="fas fa-calculator text-primary me-2"></i>Interactive Trip Distance & Fuel Cost Simulator</h4>
+                            <p class="text-muted small mb-0">Drag the distance slider or adjust mileage to compare instant cost differences.</p>
+                        </div>
+                        <span class="badge bg-primary px-3 py-2 fs-6" id="sim-distance-display">500 km Trip</span>
+                    </div>
+
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-muted">Trip Distance: <span class="fw-bold text-dark" id="calc-dist-val">500</span> km</label>
+                                <input type="range" class="form-range" id="calc-dist-range" min="10" max="2500" step="10" value="500">
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">Petrol km/L</label>
+                                    <input type="number" id="sim-petrol-eff" class="form-control form-control-sm" value="15">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">Diesel km/L</label>
+                                    <input type="number" id="sim-diesel-eff" class="form-control form-control-sm" value="20">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">CNG km/kg</label>
+                                    <input type="number" id="sim-cng-eff" class="form-control form-control-sm" value="25">
+                                </div>
+                            </div>
+
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">Petrol ₹/L</label>
+                                    <input type="number" id="sim-petrol-price" class="form-control form-control-sm" value="94.72">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">Diesel ₹/L</label>
+                                    <input type="number" id="sim-diesel-price" class="form-control form-control-sm" value="87.62">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small text-muted" style="font-size: 0.75rem;">CNG ₹/kg</label>
+                                    <input type="number" id="sim-cng-price" class="form-control form-control-sm" value="75.09">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                                        <span class="text-warning"><i class="fas fa-gas-pump me-1"></i> Petrol Cost</span>
+                                        <span id="sim-petrol-cost" class="text-dark">₹3,157.33 (33.3 L)</span>
+                                    </div>
+                                    <div class="progress" style="height: 14px; border-radius: 8px;">
+                                        <div class="progress-bar bg-warning" id="sim-petrol-bar" role="progressbar" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                                        <span class="text-info"><i class="fas fa-truck me-1"></i> Diesel Cost</span>
+                                        <span id="sim-diesel-cost" class="text-dark">₹2,190.50 (25.0 L)</span>
+                                    </div>
+                                    <div class="progress" style="height: 14px; border-radius: 8px;">
+                                        <div class="progress-bar bg-info" id="sim-diesel-bar" role="progressbar" style="width: 69%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                                        <span class="text-success"><i class="fas fa-leaf me-1"></i> CNG Cost</span>
+                                        <span id="sim-cng-cost" class="text-success fw-bold">₹1,501.80 (20.0 kg)</span>
+                                    </div>
+                                    <div class="progress" style="height: 14px; border-radius: 8px;">
+                                        <div class="progress-bar bg-success" id="sim-cng-bar" role="progressbar" style="width: 48%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="savings-banner mt-2">
+                                    <div class="savings-banner-text">
+                                        <i class="fas fa-piggy-bank me-2"></i>
+                                        <strong>CNG Savings on this trip:</strong> <span id="sim-savings-pct">52.4%</span> cheaper than Petrol
+                                    </div>
+                                    <div class="savings-banner-amount" id="sim-savings-amount">
+                                        Save ₹1,655.53
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Annual Commute Savings -->
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-calendar-alt text-primary me-2"></i>Daily Commute & Annual Fuel Savings Calculator</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Daily Commute Distance (km)</label>
+                            <input type="number" id="commute-daily-km" class="form-control" value="40">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Working Days per Month</label>
+                            <input type="number" id="commute-days-month" class="form-control" value="24">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Monthly CNG Savings vs Petrol</label>
+                            <div class="p-2 bg-success-subtle text-success border border-success rounded fw-bold fs-6" id="commute-monthly-save">
+                                ₹3,178 / month
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Annual CNG Savings vs Petrol</label>
+                            <div class="p-2 bg-success text-white rounded fw-bold fs-6" id="commute-annual-save">
+                                ₹38,136 / year
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ========================================================
+                 VIEW 3: Live Indian City Fuel Rates
+                 ======================================================== -->
+            <section id="view-rates" class="tab-view-container">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1"><i class="fas fa-gas-pump text-primary me-2"></i>Live Fuel Rates Across Indian Cities</h3>
+                        <p class="text-muted small mb-0">Daily updated reference prices for Petrol, Diesel, and CNG. Click "Apply to Route" to use that city's rates in your trip calculations.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="filter-rates-input" class="form-control form-control-sm" placeholder="Search city (e.g. Mumbai, Pune)..." style="width: 220px;">
+                    </div>
+                </div>
+
+                <div class="glass-card p-0 overflow-hidden mb-4">
+                    <div class="fuel-table-wrapper">
+                        <table class="custom-fuel-table" id="fuel-rates-table">
+                            <thead>
+                                <tr>
+                                    <th>City / State</th>
+                                    <th><i class="fas fa-gas-pump text-warning me-1"></i> Petrol Price</th>
+                                    <th><i class="fas fa-truck text-info me-1"></i> Diesel Price</th>
+                                    <th><i class="fas fa-leaf text-success me-1"></i> CNG Price</th>
+                                    <th>Price Trend</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fuel-rates-tbody">
+                                <!-- Injected by script.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================
+                 VIEW 4: About Me & Developer Details
+                 ======================================================== -->
+            <section id="view-about" class="tab-view-container">
+                <div class="about-hero-card mb-4 animate-fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 text-center mb-3 mb-lg-0">
+                            <div class="dev-avatar-large">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-2">FULL STACK DEVELOPER</span>
+                            <h2 class="fw-bold mb-2">About The Developer & RouteWise</h2>
+                            <p class="text-light opacity-90 mb-3" style="max-width: 750px;">
+                                Passionate software engineer dedicated to building high-performance, algorithmic web applications that solve real-world logistical, transport, and economic challenges.
+                            </p>
+                            
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="skill-tag"><i class="fab fa-js text-warning"></i> JavaScript (ES6+)</span>
+                                <span class="skill-tag"><i class="fas fa-map-marked text-info"></i> Leaflet.js & GIS</span>
+                                <span class="skill-tag"><i class="fas fa-route text-success"></i> OSRM Routing Engine</span>
+                                <span class="skill-tag"><i class="fab fa-html5 text-danger"></i> HTML5 & Semantic Web</span>
+                                <span class="skill-tag"><i class="fab fa-css3-alt text-primary"></i> CSS3 & Animations</span>
+                                <span class="skill-tag"><i class="fab fa-bootstrap text-info"></i> Bootstrap 5</span>
+                                <span class="skill-tag"><i class="fas fa-database text-warning"></i> 4,000+ Indian Cities Data</span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a href="https://github.com" target="_blank" class="social-icon-btn" title="GitHub Profile"><i class="fab fa-github"></i></a>
+                                <a href="https://linkedin.com" target="_blank" class="social-icon-btn" title="LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="mailto:contact@routewise.io" class="social-icon-btn" title="Email"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="glass-card p-4">
+                    <div class="row">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h4 class="fw-bold text-dark mb-2"><i class="fas fa-paper-plane text-primary me-2"></i>Get in Touch / Feedback</h4>
+                            <p class="text-muted small mb-4">Have questions about the algorithm, route data, or want to collaborate? Drop a message!</p>
+                            
+                            <div class="mb-3 d-flex align-items-center gap-3">
+                                <div class="brand-icon-wrapper" style="width:40px; height:40px;">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div class="small text-muted">Email Us</div>
+                                    <strong class="text-dark">developer@routewise.io</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <form id="contact-form">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">Your Name</label>
+                                        <input type="text" class="form-control" id="contact-name" placeholder="John Doe" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">Your Email</label>
+                                        <input type="email" class="form-control" id="contact-email" placeholder="name@example.com" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted">Subject</label>
+                                    <input type="text" class="form-control" id="contact-subject" placeholder="Feature suggestion / Route query" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted">Message</label>
+                                    <textarea class="form-control" id="contact-message" rows="3" placeholder="Write your message here..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary-custom w-100" id="btn-submit-contact">
+                                    <i class="fas fa-paper-plane me-1"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Saved Routes Modal -->
+        <div class="modal fade" id="savedRoutesModal" tabindex="-1" aria-labelledby="savedRoutesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content rounded-4 shadow border-0">
+                    <div class="modal-header bg-light border-0">
+                        <h5 class="modal-title fw-bold" id="savedRoutesModalLabel"><i class="fas fa-bookmark text-primary me-2"></i>My Saved Trips</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div id="saved-routes-list-modal">
+                            <p class="text-muted text-center my-4">No saved trips found yet. Calculate a route and click "Save Trip"!</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="chart-wrap">
-              <div class="chart-header">
-                <h4>Market Price vs Trip Cost</h4>
-                <span>Petrol vs Diesel vs CNG</span>
-              </div>
-              <svg id="fuel-chart" viewBox="0 0 420 240" aria-label="Fuel cost comparison chart"></svg>
-              <div id="fuel-legend" class="legend"></div>
-            </div>
-          </section>
         </div>
 
-        <section class="results-row">
-          <div class="panel summary-panel">
-            <div class="panel-header">
-              <h3>Estimated route summary</h3>
+        <!-- Footer -->
+        <footer class="custom-footer">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6">
+                        <a class="navbar-brand mb-3 d-inline-flex" href="#optimizer">
+                            <span class="brand-icon-wrapper"><i class="fas fa-route"></i></span>
+                            <span>Route<span class="text-success">Wise</span></span>
+                        </a>
+                        <p class="small text-light opacity-75 mb-3" style="max-width: 320px;">
+                            Smart algorithmic vehicle route optimization and Indian multi-fuel price intelligence (Petrol, Diesel & CNG) to reduce travel expenditure.
+                        </p>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 col-6">
+                        <h6 class="footer-heading">Features</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#optimizer" class="footer-link" onclick="switchTab('optimizer')">Route Planner</a></li>
+                            <li><a href="#comparison" class="footer-link" onclick="switchTab('comparison')">Fuel Price Comparison</a></li>
+                            <li><a href="#rates" class="footer-link" onclick="switchTab('rates')">City Fuel Rates</a></li>
+                            <li><a href="#about" class="footer-link" onclick="switchTab('about')">About Me</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-6">
+                        <h6 class="footer-heading">Fuel Economics</h6>
+                        <ul class="list-unstyled small">
+                            <li class="mb-2"><span class="badge bg-warning text-dark me-1">Petrol</span> ₹94.72/L</li>
+                            <li class="mb-2"><span class="badge bg-info text-white me-1">Diesel</span> ₹87.62/L</li>
+                            <li class="mb-2"><span class="badge bg-success text-white me-1">CNG</span> ₹75.09/kg</li>
+                            <li class="text-muted">Save ~50% fuel cost with CNG</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading">System Status</h6>
+                        <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-25 small">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="ticker-dot"></span>
+                                <span class="text-success fw-bold">OSRM Routing API: Online</span>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.75rem;">
+                                Database: 4,000+ Indian Waypoints<br>
+                                Session: Authenticated & Secure
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="text-muted">
+                        &copy; <span id="current-year">2026</span> RouteWise Optimizer.
+                    </div>
+                    <div class="text-muted small">
+                        Built for Indian Commuters & Fleet Logistics
+                    </div>
+                </div>
             </div>
-            <div id="route-summary" class="summary-grid"></div>
-          </div>
-        </section>
+        </footer>
 
-        <section class="map-section">
-          <div class="panel map-panel">
-            <div class="panel-header">
-              <h3>Route Map</h3>
-              <span class="pill">Interactive view</span>
-            </div>
-            <div id="route-map" class="route-map"></div>
-          </div>
-        </section>
-      </section>
+    </div>
 
-      <!-- ABOUT VIEW -->
-      <section id="about-view" class="about-page hidden">
-        <header class="about-header">
-          <h1>About RouteWise</h1>
-          <p class="about-subtitle">Smart Travel Planning Made Simple</p>
-        </header>
+    <!-- Toast Container -->
+    <div class="custom-toast-container" id="toast-container"></div>
 
-        <div class="about-container">
-          <section class="about-section">
-            <h2>Our Mission</h2>
-            <p>RouteWise is dedicated to helping travelers plan efficient routes, compare fuel costs, and optimize their journeys. We believe that smart travel planning should be accessible to everyone.</p>
-          </section>
-
-          <section class="about-section">
-            <h2>Key Features</h2>
-            <ul class="features-list">
-              <li><strong>Smart Route Planning:</strong> Get optimized routes with multiple stops and real-time distance calculation.</li>
-              <li><strong>Fuel Cost Comparison:</strong> Compare prices for Petrol, Diesel, and CNG to find the most economical option.</li>
-              <li><strong>Interactive Maps:</strong> Visualize your route on an interactive map with actual paths and waypoints.</li>
-            </ul>
-          </section>
-        </div>
-      </section>
-    </main>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <script type="module" src="./script.js"></script>
-  </body>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- RouteWise Modular JS (load order matters) -->
+    <script src="js/config.js"></script>
+    <script src="js/cities.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/fuel.js"></script>
+    <script src="js/saved-routes.js"></script>
+    <script src="js/app.js"></script>
+</body>
 </html>
