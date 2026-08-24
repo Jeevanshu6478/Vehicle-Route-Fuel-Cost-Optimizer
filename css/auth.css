@@ -26,6 +26,15 @@
     backdrop-filter: blur(16px);
     border-radius: var(--radius-xl);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    background: radial-gradient(circle at 10% 20%, #0f172a 0%, #1e293b 90%);
+    padding: 2rem 1rem;
+}
+
+.auth-portal-card {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     max-width: 960px;
     width: 100%;
@@ -81,6 +90,9 @@
     color: #0f172a;
     transform: scale(1.05);
 }
+}
+
+.auth-form-side { padding: 3rem 2.5rem; background: #ffffff; }
 
 .auth-pill-switch {
     display: flex;
@@ -144,4 +156,6 @@
 [data-theme="dark"] .auth-gateway-close-btn:hover {
     background: #334155;
     color: #ffffff;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
