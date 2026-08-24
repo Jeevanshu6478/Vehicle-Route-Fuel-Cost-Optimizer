@@ -120,6 +120,19 @@ document.getElementById('gateway-signup-form')?.addEventListener('submit', (e) =
     triggerLoginSequence(newUser);
 });
 
+// 3. Quick 1-Click Demo Login Handlers
+document.getElementById('btn-quick-cng-driver')?.addEventListener('click', () => {
+    const seed = DEFAULT_SEED_USERS[0];
+    hideAuthGateway();
+    triggerLoginSequence(seed);
+});
+
+document.getElementById('btn-quick-fleet-mgr')?.addEventListener('click', () => {
+    const seed = DEFAULT_SEED_USERS[1];
+    hideAuthGateway();
+    triggerLoginSequence(seed);
+});
+
 // ── Car Animation + App Unlock ───────────────────────────────────
 function triggerLoginSequence(userObj) {
     currentUser = userObj;
