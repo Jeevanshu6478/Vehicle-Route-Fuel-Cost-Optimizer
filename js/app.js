@@ -13,14 +13,19 @@ async function initApp() {
     renderFuelRatesTable();
     updateFuelSimulator();
 
-    // 3. Session restore or initialize Guest Mode
+    // 3. Trigger initial car drive-in loading screen
     const storedUser = typeof getStoredSessionUser === 'function' ? getStoredSessionUser() : null;
-    if (storedUser) {
-        currentUser = storedUser;
-        unlockApplication();
+    if (typeof triggerInitialLoadingSequence === 'function') {
+        triggerInitialLoadingSequence(storedUser);
     } else {
-        enterGuestMode();
+        if (storedUser) {
+            currentUser = storedUser;
+            unlockApplication();
+        } else {
+            enterGuestMode();
+        }
     }
 }
 
 initApp();
+
