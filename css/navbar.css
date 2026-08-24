@@ -141,6 +141,33 @@
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); 
 }
 
+/* ── Theme Mode Toggle Button ──────────────────────────────────── */
+.theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14.5px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #38bdf8;
+    transform: scale(1.08) rotate(15deg);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+}
+.theme-toggle-btn:focus {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+}
+
 /* ── User & Guest Badge (Modern Dark Pill) ─────────────────────── */
 .user-profile-badge {
     display: inline-flex;

@@ -12,12 +12,13 @@
 .comp-hero {
     position: relative;
     overflow: hidden;
-    margin-bottom: 24px;
-    padding: 32px 28px;
+    margin-bottom: 20px;
+    padding: 26px 24px;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
     color: #fff;
+    border-radius: 16px;
 }
 .comp-hero h2 { color: #fff; font-weight: 800; font-size: clamp(24px, 3.2vw, 32px); }
 .comp-hero .text-light { color: #cbd5e1 !important; font-size: 14.5px; }
@@ -903,6 +904,192 @@
 .contact-interactive-btn:active {
     transform: translateY(0) scale(0.98);
 }
+
+/* ── Dark Mode Overrides for Sections (Comparison, Rates, About) ── */
+[data-theme="dark"] .fuel-overview {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+}
+[data-theme="dark"] .fuel-overview:hover {
+    background: #131d35;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .insight-card {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+}
+[data-theme="dark"] .insight-card:hover {
+    background: #131d35;
+    border-color: #38bdf8;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .insight-val {
+    color: #f8fafc;
+}
+[data-theme="dark"] .insight-txt {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .rates-search-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+}
+[data-theme="dark"] .rates-search-input:focus {
+    background: #0f172a;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+}
+
+[data-theme="dark"] .rates-city-count {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .rates-slider-arrow {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .rates-slider-arrow:hover {
+    background: #2563eb;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .fuel-rate-card {
+    background: #0f172a;
+    border-color: #334155;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    color: #f8fafc;
+}
+[data-theme="dark"] .fuel-rate-card:hover {
+    background: #131e35;
+    border-color: #38bdf8;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="dark"] .frc-city-name {
+    color: #f8fafc;
+}
+[data-theme="dark"] .frc-city-avatar {
+    background: #1e293b;
+    color: #38bdf8;
+}
+[data-theme="dark"] .frc-trend-badge {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+[data-theme="dark"] .frc-trend-badge.trend-up {
+    background: rgba(225, 29, 72, 0.15);
+    border-color: rgba(225, 29, 72, 0.35);
+    color: #f43f5e;
+}
+[data-theme="dark"] .frc-trend-badge.trend-stable {
+    background: rgba(5, 150, 105, 0.15);
+    border-color: rgba(5, 150, 105, 0.35);
+    color: #34d399;
+}
+
+[data-theme="dark"] .frc-fuel-bar-wrap {
+    background: #1e293b;
+}
+[data-theme="dark"] .frc-fuel-price {
+    color: #f8fafc;
+}
+[data-theme="dark"] .frc-apply-btn {
+    background: #1e293b;
+    color: #38bdf8;
+}
+[data-theme="dark"] .frc-apply-btn:hover {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .rates-scroll-track {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .feature-pillar-card {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+}
+[data-theme="dark"] .feature-pillar-card:hover {
+    background: #131d35;
+    border-color: #38bdf8;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .feature-pillar-card h6 {
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .feature-pillar-card p {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .icon-blue    { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
+[data-theme="dark"] .icon-emerald { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+[data-theme="dark"] .icon-amber   { background: rgba(217, 119, 6, 0.2); color: #fbbf24; }
+[data-theme="dark"] .icon-rose    { background: rgba(225, 29, 72, 0.2); color: #f43f5e; }
+[data-theme="dark"] .icon-cyan    { background: rgba(2, 132, 199, 0.2); color: #38bdf8; }
+
+[data-theme="dark"] .topic-chip {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+[data-theme="dark"] .topic-chip:hover {
+    background: #334155;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+[data-theme="dark"] .topic-chip.active {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+}
+
+[data-theme="dark"] .contact-interactive-wrapper {
+    background: linear-gradient(135deg, #0f172a 0%, #090d16 100%) !important;
+    border-color: #334155 !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .contact-form-container {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .creator-note-panel .support-box-interactive {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+[data-theme="dark"] .creator-note-panel .support-box-interactive:hover {
+    background: #131e35 !important;
+    border-color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .creator-note-panel .social-icon-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+[data-theme="dark"] .creator-note-panel .social-icon-btn:hover {
+    background: #2563eb;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
 
 
 

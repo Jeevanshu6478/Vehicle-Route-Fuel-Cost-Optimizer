@@ -279,7 +279,12 @@
                         </li>
                     </ul>
 
-                    <div class="d-flex align-items-center gap-3 flex-nowrap ms-auto">
+                    <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
+                        <!-- Quick Dark / Light Theme Toggle Button -->
+                        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Light / Dark Theme" onclick="toggleTheme()">
+                            <i class="fas fa-moon" id="theme-toggle-icon"></i>
+                        </button>
+
                         <!-- User Profile Dropdown / Guest Mode -->
                         <div id="auth-nav-container">
                             <div class="dropdown">
@@ -294,11 +299,16 @@
                                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Unlocked</span>
                                         </h6>
                                     </li>
-                                    <li><span class="dropdown-item-text small text-muted">All route & fuel tools active</span></li>
+                                    <li><span class="dropdown-item-text small text-muted">All route &amp; fuel tools active</span></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-primary fw-bold" href="#" onclick="showAuthGateway('signin')">
                                             <i class="fas fa-sign-in-alt me-2"></i>Sign In / Register
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-secondary small" href="#" onclick="toggleTheme()">
+                                            <i class="fas fa-adjust me-2"></i>Toggle Dark / Light
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
@@ -387,50 +397,393 @@
                     </div>
                 </div>
 
-                <!-- Band 3 · How it works -->
-                <div id="landing-how" class="landing-band">
-                    <div class="container">
-                        <div class="how-header">
-                            <span class="rw-kicker">How it works</span>
-                            <h2 class="how-title">Three steps, no account required</h2>
-                            <p class="how-subtitle">From city input to fuel cost breakdown in seconds.</p>
+                <!-- Band 3 · How it works (Interactive Animated Pipeline) -->
+                <div id="landing-how" class="landing-band position-relative overflow-hidden">
+                    <!-- Ambient floating glowing orbs in background -->
+                    <div class="how-ambient-orb orb-1"></div>
+                    <div class="how-ambient-orb orb-2"></div>
+
+                    <div class="container position-relative z-1">
+                        <div class="how-header text-center mb-5">
+                            <span class="rw-kicker"><i class="fas fa-microchip me-1"></i> Interactive Workflow</span>
+                            <h2 class="how-title">How RouteWise Calculates &amp; Optimizes</h2>
+                            <p class="how-subtitle">4-step algorithmic pipeline combining TSP route graphs and multi-fuel price intelligence.</p>
                         </div>
-                        <div class="how-grid">
-                            <div class="how-step" data-step="1">
-                                <div class="how-step-icon-wrap">
-                                    <div class="how-step-icon icon-step-1">
-                                        <i class="fas fa-map-pin"></i>
+
+                        <!-- 4 Animated Interactive Steps Grid -->
+                        <div class="how-interactive-grid">
+                            
+                            <!-- Step 1: Geocoding & Multi-Stop Waypoints -->
+                            <div class="how-step-interactive tilt-card" data-step="1">
+                                <div class="how-step-top">
+                                    <div class="how-step-badge">
+                                        <span class="step-num">01</span>
+                                        <span class="step-icon-circle icon-step-1"><i class="fas fa-map-marked-alt"></i></span>
                                     </div>
-                                    <div class="how-step-number">01</div>
+                                    <span class="how-step-phase">Input Phase</span>
                                 </div>
-                                <div class="how-step-connector"><div class="how-connector-line"></div></div>
-                                <div class="how-step-title">Add your stops</div>
-                                <p class="how-step-body">Type any of 4,231 Indian cities, drop pins on the map, or add a metro hub in one click.</p>
-                                <div class="how-step-tag"><i class="fas fa-city"></i> 4,231 Cities</div>
-                            </div>
-                            <div class="how-step" data-step="2">
-                                <div class="how-step-icon-wrap">
-                                    <div class="how-step-icon icon-step-2">
-                                        <i class="fas fa-route"></i>
+                                <h4 class="how-step-heading">Add Journey Places</h4>
+                                <p class="how-step-desc">Search 4,231 verified Indian cities with instant coordinate lookup, drop map pins, or add via stops.</p>
+                                
+                                <!-- Mini Interactive Widget 1 -->
+                                <div class="how-step-mini-widget widget-geocoding">
+                                    <div class="mini-geo-pills">
+                                        <span class="mini-geo-pill origin"><i class="fas fa-circle me-1"></i> Delhi</span>
+                                        <span class="mini-geo-arrow"><i class="fas fa-arrow-right"></i></span>
+                                        <span class="mini-geo-pill via"><i class="fas fa-map-pin me-1"></i> Jaipur</span>
+                                        <span class="mini-geo-arrow"><i class="fas fa-arrow-right"></i></span>
+                                        <span class="mini-geo-pill dest"><i class="fas fa-flag-checkered me-1"></i> Mumbai</span>
                                     </div>
-                                    <div class="how-step-number">02</div>
-                                </div>
-                                <div class="how-step-connector"><div class="how-connector-line"></div></div>
-                                <div class="how-step-title">We find the real distance</div>
-                                <p class="how-step-body">Not straight lines. RouteWise orders your stops and asks OSRM for actual road distance and driving time.</p>
-                                <div class="how-step-tag"><i class="fas fa-road"></i> Real Roads</div>
-                            </div>
-                            <div class="how-step" data-step="3">
-                                <div class="how-step-icon-wrap">
-                                    <div class="how-step-icon icon-step-3">
-                                        <i class="fas fa-balance-scale"></i>
+                                    <div class="mini-geo-meta text-muted small mt-2">
+                                        <i class="fas fa-check-circle text-success me-1"></i> Fast TSP Waypoint Indexing
                                     </div>
-                                    <div class="how-step-number">03</div>
                                 </div>
-                                <div class="how-step-title">Compare all three fuels</div>
-                                <p class="how-step-body">Litres or kilograms needed, total rupees, and cost per kilometre for petrol, diesel and CNG side by side.</p>
-                                <div class="how-step-tag"><i class="fas fa-gas-pump"></i> 3 Fuels</div>
                             </div>
+
+                            <!-- Step 2: TSP & High-Precision OSRM Routing -->
+                            <div class="how-step-interactive tilt-card" data-step="2">
+                                <div class="how-step-top">
+                                    <div class="how-step-badge">
+                                        <span class="step-num">02</span>
+                                        <span class="step-icon-circle icon-step-2"><i class="fas fa-route"></i></span>
+                                    </div>
+                                    <span class="how-step-phase">Routing Engine</span>
+                                </div>
+                                <h4 class="how-step-heading">Real Highway Geometry</h4>
+                                <p class="how-step-desc">Open Source Routing Machine (OSRM) resolves exact turn-by-turn road curves, highways, and travel duration.</p>
+                                
+                                <!-- Mini Interactive Widget 2 -->
+                                <div class="how-step-mini-widget widget-routing">
+                                    <div class="mini-road-track">
+                                        <div class="mini-road-car"><i class="fas fa-car-side"></i></div>
+                                        <div class="mini-road-line"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-2 small">
+                                        <span class="fw-bold text-primary"><i class="fas fa-road me-1"></i> Highway Distance</span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">OSRM Live</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Multi-Fuel Price Matrix (Live Slider) -->
+                            <div class="how-step-interactive tilt-card highlight-step" data-step="3">
+                                <div class="how-step-top">
+                                    <div class="how-step-badge">
+                                        <span class="step-num">03</span>
+                                        <span class="step-icon-circle icon-step-3"><i class="fas fa-gas-pump"></i></span>
+                                    </div>
+                                    <span class="how-step-phase">Live Calculator</span>
+                                </div>
+                                <h4 class="how-step-heading">Multi-Fuel Economics</h4>
+                                <p class="how-step-desc">Computes volume needed (L/kg) and prices Petrol, Diesel, and CNG against live city reference rates.</p>
+                                
+                                <!-- Mini Interactive Live Slider Widget -->
+                                <div class="how-step-mini-widget widget-simulator">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small text-muted fw-semibold">Interactive Distance:</span>
+                                        <span class="badge bg-dark text-white fw-bold font-monospace" id="how-sim-dist-text">350 km</span>
+                                    </div>
+                                    <input type="range" class="form-range custom-mini-slider" id="how-sim-slider" min="50" max="1500" step="50" value="350">
+                                    
+                                    <div class="mini-sim-rates-row mt-2">
+                                        <div class="mini-rate-box petrol">
+                                            <span class="rate-label">Petrol</span>
+                                            <span class="rate-val" id="how-sim-petrol">₹2,210</span>
+                                        </div>
+                                        <div class="mini-rate-box diesel">
+                                            <span class="rate-label">Diesel</span>
+                                            <span class="rate-val" id="how-sim-diesel">₹1,533</span>
+                                        </div>
+                                        <div class="mini-rate-box cng">
+                                            <span class="rate-label">CNG</span>
+                                            <span class="rate-val" id="how-sim-cng">₹1,051</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-center">
+                                        <span class="badge bg-success text-white py-1 px-2 small shadow-sm" id="how-sim-savings">Save ₹1,159 on CNG</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Cost Intelligence & Verified Savings -->
+                            <div class="how-step-interactive tilt-card" data-step="4">
+                                <div class="how-step-top">
+                                    <div class="how-step-badge">
+                                        <span class="step-num">04</span>
+                                        <span class="step-icon-circle icon-step-4"><i class="fas fa-chart-line"></i></span>
+                                    </div>
+                                    <span class="how-step-phase">Optimization</span>
+                                </div>
+                                <h4 class="how-step-heading">Exportable Itinerary</h4>
+                                <p class="how-step-desc">Get instant cost per kilometre, visual fuel economy comparisons, PDF summaries, and turn-by-turn routes.</p>
+                                
+                                <!-- Mini Interactive Widget 4 -->
+                                <div class="how-step-mini-widget widget-summary">
+                                    <div class="mini-compare-bars">
+                                        <div class="mini-bar-item">
+                                            <span class="small text-muted">Petrol</span>
+                                            <div class="progress flex-grow-1" style="height: 6px;">
+                                                <div class="progress-bar bg-danger" id="how-sim-pbar" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mini-bar-item">
+                                            <span class="small text-muted">CNG</span>
+                                            <div class="progress flex-grow-1" style="height: 6px;">
+                                                <div class="progress-bar bg-success" id="how-sim-cbar" style="width: 48%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 d-flex justify-content-between align-items-center small text-muted">
+                                        <span><i class="fas fa-file-pdf text-danger me-1"></i> Print / PDF</span>
+                                        <span class="text-success fw-bold"><i class="fas fa-leaf me-1"></i> Eco-Friendly</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Band 4 · Featured Route Examples Showcase -->
+                <div id="landing-examples" class="landing-band">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+                            <div>
+                                <span class="rw-kicker"><i class="fas fa-compass me-1"></i> Curated Corridors</span>
+                                <h2 class="how-title mb-1">Featured Indian Highway Examples</h2>
+                                <p class="how-subtitle">1-click popular routes across tourism, freight, and technology hubs with live fuel comparisons.</p>
+                            </div>
+                            <!-- Category Filter Pills -->
+                            <div class="example-filters-container">
+                                <button type="button" class="example-filter-pill active" data-filter="all" onclick="filterExampleRoutes('all')">
+                                    All Routes
+                                </button>
+                                <button type="button" class="example-filter-pill" data-filter="tourism" onclick="filterExampleRoutes('tourism')">
+                                    🏛️ Tourism &amp; Scenic
+                                </button>
+                                <button type="button" class="example-filter-pill" data-filter="freight" onclick="filterExampleRoutes('freight')">
+                                    🚚 Commercial Freight
+                                </button>
+                                <button type="button" class="example-filter-pill" data-filter="tech" onclick="filterExampleRoutes('tech')">
+                                    ⚡ Tech Corridors
+                                </button>
+                                <button type="button" class="example-filter-pill" data-filter="coastal" onclick="filterExampleRoutes('coastal')">
+                                    🌴 Coastal Express
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Example Route Cards Grid -->
+                        <div class="example-routes-grid" id="example-routes-container">
+                            
+                            <!-- Card 1: Golden Triangle -->
+                            <div class="example-route-card tilt-card" data-category="tourism">
+                                <div class="example-card-header">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">
+                                            <i class="fas fa-landmark me-1"></i> Heritage Circuit
+                                        </span>
+                                        <span class="small text-muted fw-bold"><i class="fas fa-clock me-1"></i> 7.5 hrs</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">Golden Triangle Express</h5>
+                                    <p class="small text-muted mb-3">Delhi ➔ Agra ➔ Jaipur</p>
+                                </div>
+                                <div class="example-card-body">
+                                    <div class="example-waypoints-preview mb-3">
+                                        <span class="ex-point origin">Delhi</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Agra</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point dest">Jaipur</span>
+                                    </div>
+                                    <div class="example-fuel-matrix p-2 rounded-3 bg-light border mb-3">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span class="text-muted">Distance: <strong>470 km</strong></span>
+                                            <span class="badge bg-success">Save ₹2,070</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between small font-monospace">
+                                            <span>Petrol: <strong class="text-danger">₹3,950</strong></span>
+                                            <span>Diesel: <strong class="text-primary">₹2,740</strong></span>
+                                            <span>CNG: <strong class="text-success">₹1,880</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">Traverse the Taj Mahal in Agra and royal palaces in Jaipur along high-speed expressways.</p>
+                                </div>
+                                <div class="example-card-footer mt-auto">
+                                    <button type="button" class="btn btn-primary-custom w-100 py-2 fw-semibold" onclick="launchExampleFromCard('golden-triangle')">
+                                        <i class="fas fa-location-arrow me-2"></i> Launch &amp; Map This Route
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Western Freightway -->
+                            <div class="example-route-card tilt-card" data-category="freight">
+                                <div class="example-card-header">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
+                                            <i class="fas fa-truck me-1"></i> Heavy Freight
+                                        </span>
+                                        <span class="small text-muted fw-bold"><i class="fas fa-clock me-1"></i> 22 hrs</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">Western Industrial Freightway</h5>
+                                    <p class="small text-muted mb-3">Delhi ➔ Ahmedabad ➔ Surat ➔ Mumbai</p>
+                                </div>
+                                <div class="example-card-body">
+                                    <div class="example-waypoints-preview mb-3">
+                                        <span class="ex-point origin">Delhi</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Jaipur</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Surat</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point dest">Mumbai</span>
+                                    </div>
+                                    <div class="example-fuel-matrix p-2 rounded-3 bg-light border mb-3">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span class="text-muted">Distance: <strong>1,418 km</strong></span>
+                                            <span class="badge bg-success">Save ₹6,260</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between small font-monospace">
+                                            <span>Petrol: <strong class="text-danger">₹11,940</strong></span>
+                                            <span>Diesel: <strong class="text-primary">₹8,290</strong></span>
+                                            <span>CNG: <strong class="text-success">₹5,680</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">The main commercial artery linking North Indian industrial hubs to India's financial capital.</p>
+                                </div>
+                                <div class="example-card-footer mt-auto">
+                                    <button type="button" class="btn btn-primary-custom w-100 py-2 fw-semibold" onclick="launchExampleFromCard('western-freight')">
+                                        <i class="fas fa-location-arrow me-2"></i> Launch &amp; Map This Route
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Southern Tech Corridor -->
+                            <div class="example-route-card tilt-card" data-category="tech">
+                                <div class="example-card-header">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
+                                            <i class="fas fa-bolt me-1"></i> Tech &amp; Commerce
+                                        </span>
+                                        <span class="small text-muted fw-bold"><i class="fas fa-clock me-1"></i> 11 hrs</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">Southern IT &amp; Innovation Corridor</h5>
+                                    <p class="small text-muted mb-3">Bengaluru ➔ Mysuru ➔ Coimbatore ➔ Chennai</p>
+                                </div>
+                                <div class="example-card-body">
+                                    <div class="example-waypoints-preview mb-3">
+                                        <span class="ex-point origin">Bengaluru</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Mysuru</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Coimbatore</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point dest">Chennai</span>
+                                    </div>
+                                    <div class="example-fuel-matrix p-2 rounded-3 bg-light border mb-3">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span class="text-muted">Distance: <strong>680 km</strong></span>
+                                            <span class="badge bg-success">Save ₹3,005</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between small font-monospace">
+                                            <span>Petrol: <strong class="text-danger">₹5,730</strong></span>
+                                            <span>Diesel: <strong class="text-primary">₹3,980</strong></span>
+                                            <span>CNG: <strong class="text-success">₹2,725</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">Connecting Silicon Valley of India across industrial manufacturing centers to Chennai Port.</p>
+                                </div>
+                                <div class="example-card-footer mt-auto">
+                                    <button type="button" class="btn btn-primary-custom w-100 py-2 fw-semibold" onclick="launchExampleFromCard('southern-tech')">
+                                        <i class="fas fa-location-arrow me-2"></i> Launch &amp; Map This Route
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: Himalayan Foothills -->
+                            <div class="example-route-card tilt-card" data-category="tourism">
+                                <div class="example-card-header">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge px-2 py-1" style="color: #8b5cf6; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);">
+                                            <i class="fas fa-mountain me-1"></i> Scenic Mountain
+                                        </span>
+                                        <span class="small text-muted fw-bold"><i class="fas fa-clock me-1"></i> 8.5 hrs</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">Himalayan Foothills &amp; Ganga</h5>
+                                    <p class="small text-muted mb-3">Delhi ➔ Chandigarh ➔ Dehradun ➔ Rishikesh</p>
+                                </div>
+                                <div class="example-card-body">
+                                    <div class="example-waypoints-preview mb-3">
+                                        <span class="ex-point origin">Delhi</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Chandigarh</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Dehradun</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point dest">Rishikesh</span>
+                                    </div>
+                                    <div class="example-fuel-matrix p-2 rounded-3 bg-light border mb-3">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span class="text-muted">Distance: <strong>485 km</strong></span>
+                                            <span class="badge bg-success">Save ₹2,150</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between small font-monospace">
+                                            <span>Petrol: <strong class="text-danger">₹4,090</strong></span>
+                                            <span>Diesel: <strong class="text-primary">₹2,840</strong></span>
+                                            <span>CNG: <strong class="text-success">₹1,940</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">Scenic Himalayan escape crossing Punjab &amp; Haryana expressways up into serene river valleys.</p>
+                                </div>
+                                <div class="example-card-footer mt-auto">
+                                    <button type="button" class="btn btn-primary-custom w-100 py-2 fw-semibold" onclick="launchExampleFromCard('himalayan-foothills')">
+                                        <i class="fas fa-location-arrow me-2"></i> Launch &amp; Map This Route
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 5: Konkan Coast -->
+                            <div class="example-route-card tilt-card" data-category="coastal">
+                                <div class="example-card-header">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1">
+                                            <i class="fas fa-umbrella-beach me-1"></i> Coastal Roadtrip
+                                        </span>
+                                        <span class="small text-muted fw-bold"><i class="fas fa-clock me-1"></i> 10 hrs</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">Konkan Coast &amp; Ghats Cruise</h5>
+                                    <p class="small text-muted mb-3">Mumbai ➔ Pune ➔ Kolhapur ➔ Goa</p>
+                                </div>
+                                <div class="example-card-body">
+                                    <div class="example-waypoints-preview mb-3">
+                                        <span class="ex-point origin">Mumbai</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Pune</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point stop">Kolhapur</span>
+                                        <span class="ex-arrow">&rarr;</span>
+                                        <span class="ex-point dest">Goa</span>
+                                    </div>
+                                    <div class="example-fuel-matrix p-2 rounded-3 bg-light border mb-3">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span class="text-muted">Distance: <strong>590 km</strong></span>
+                                            <span class="badge bg-success">Save ₹2,620</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between small font-monospace">
+                                            <span>Petrol: <strong class="text-danger">₹4,980</strong></span>
+                                            <span>Diesel: <strong class="text-primary">₹3,450</strong></span>
+                                            <span>CNG: <strong class="text-success">₹2,360</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">The ultimate roadtrip experience crossing the Western Ghats and descending into Goa's palm beaches.</p>
+                                </div>
+                                <div class="example-card-footer mt-auto">
+                                    <button type="button" class="btn btn-primary-custom w-100 py-2 fw-semibold" onclick="launchExampleFromCard('konkan-coast')">
+                                        <i class="fas fa-location-arrow me-2"></i> Launch &amp; Map This Route
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -539,10 +892,20 @@
                         <h3 class="mb-1 fw-bold text-dark">From &rarr; To route &amp; multi-fuel cost</h3>
                         <p class="text-muted small mb-0">Enter a starting place and a destination. The map returns exact road distance, and the panel below breaks down petrol, diesel and CNG quantity and cost.</p>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary" id="btn-quick-delhi-mumbai">
-                            <i class="fas fa-magic me-1"></i> Demo: Delhi → Mumbai
-                        </button>
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-magic me-1"></i> Featured Route Presets
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 280px;">
+                                <li><h6 class="dropdown-header">⚡ 1-Click Highway Corridors</h6></li>
+                                <li><a class="dropdown-item small" href="#" onclick="loadRoutePreset('Delhi', 'Jaipur', ['Agra'])"><i class="fas fa-landmark text-warning me-2"></i>Golden Triangle (Delhi ➔ Agra ➔ Jaipur)</a></li>
+                                <li><a class="dropdown-item small" href="#" onclick="loadRoutePreset('Delhi', 'Mumbai', ['Jaipur', 'Ahmedabad', 'Surat'])"><i class="fas fa-truck text-primary me-2"></i>Western Freightway (Delhi ➔ Mumbai)</a></li>
+                                <li><a class="dropdown-item small" href="#" onclick="loadRoutePreset('Bengaluru', 'Chennai', ['Mysuru', 'Coimbatore'])"><i class="fas fa-bolt text-success me-2"></i>Southern Tech (Bengaluru ➔ Chennai)</a></li>
+                                <li><a class="dropdown-item small" href="#" onclick="loadRoutePreset('Delhi', 'Rishikesh', ['Chandigarh', 'Dehradun'])"><i class="fas fa-mountain me-2" style="color:#8b5cf6"></i>Himalayan Foothills (Delhi ➔ Rishikesh)</a></li>
+                                <li><a class="dropdown-item small" href="#" onclick="loadRoutePreset('Mumbai', 'Goa', ['Pune', 'Kolhapur'])"><i class="fas fa-umbrella-beach text-info me-2"></i>Konkan Coast (Mumbai ➔ Goa)</a></li>
+                            </ul>
+                        </div>
                         <button class="btn btn-sm btn-outline-secondary" id="btn-show-saved-routes">
                             <i class="fas fa-bookmark me-1"></i> Saved Trips (<span id="saved-count-badge">0</span>)
                         </button>

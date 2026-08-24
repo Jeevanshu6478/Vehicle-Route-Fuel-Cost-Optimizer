@@ -194,7 +194,7 @@ function renderAuthNavbar() {
                     <span class="user-avatar-mini">${initials}</span>
                     <span class="d-none d-sm-inline fw-bold">${currentUser.name}</span>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 240px;">
                     <li>
                         <h6 class="dropdown-header d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-user-check me-1 text-success"></i> Signed In</span>
@@ -210,6 +210,12 @@ function renderAuthNavbar() {
                             <span class="badge bg-primary rounded-pill" id="saved-count-badge">${savedCount}</span>
                         </a>
                     </li>
+                    <li>
+                        <a class="dropdown-item text-secondary small" href="#" onclick="toggleTheme()">
+                            <i class="fas fa-adjust me-2"></i>Toggle Dark / Light
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Sign Out to Guest</a></li>
                 </ul>
             </div>
@@ -229,11 +235,16 @@ function renderAuthNavbar() {
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Unlocked</span>
                         </h6>
                     </li>
-                    <li><span class="dropdown-item-text small text-muted">All route & fuel tools active</span></li>
+                    <li><span class="dropdown-item-text small text-muted">All route &amp; fuel tools active</span></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item text-primary fw-bold" href="#" onclick="showAuthGateway('signin')">
                             <i class="fas fa-sign-in-alt me-2"></i>Sign In / Register
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-secondary small" href="#" onclick="toggleTheme()">
+                            <i class="fas fa-adjust me-2"></i>Toggle Dark / Light
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>

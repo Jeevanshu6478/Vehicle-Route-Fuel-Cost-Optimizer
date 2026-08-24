@@ -1,8 +1,8 @@
 /**
  * RouteWise — landing.js
- * Hero map (separate Leaflet instance), load sequence, scroll reveals.
- * Loaded AFTER map.js — does NOT touch the planner's `map` global.
- * Depends on: config.js (for FALLBACK_INDIAN_CITIES)
+ * Hero map (Leaflet instance), load sequence, interactive How-It-Works simulator,
+ * Featured Route Examples showcase, scroll reveals, and full-body interactive animations.
+ * Depends on: config.js (for FALLBACK_INDIAN_CITIES), map.js (for loadRoutePreset)
  */
 
 // ── Hero Map State ──────────────────────────────────────────────────
@@ -11,7 +11,6 @@ let heroRouteLayer = null;
 let landingInitDone = false;
 
 // ── Hardcoded route: Delhi → Jaipur → Mumbai ────────────────────────
-// A rough highway-following polyline (no OSRM call — avoids rate limits)
 const HERO_ROUTE_COORDS = [
     [28.6139, 77.2090],   // Delhi
     [28.19, 76.60],
@@ -25,78 +24,165 @@ const HERO_ROUTE_COORDS = [
     [22.30, 72.80],
     [21.17, 72.83],       // Surat area
     [20.40, 73.00],
-    [19.85, 73.20],
-    [19.50, 73.10],
-    [19.22, 72.98],
+    [20.00, 72.90],
     [19.0760, 72.8777]    // Mumbai
 ];
 
 const HERO_CITIES = [
-    { name: 'Delhi',  lat: 28.6139, lng: 77.2090, color: '#c97700' },  // amber — petrol
-    { name: 'Jaipur', lat: 26.9124, lng: 75.7873, color: '#2563eb' },  // blue  — diesel
-    { name: 'Mumbai', lat: 19.0760, lng: 72.8777, color: '#059669' }   // green — CNG
+    { name: 'Delhi',  lat: 28.6139, lng: 77.2090, color: '#c97700' },
+    { name: 'Jaipur', lat: 26.9124, lng: 75.7873, color: '#2563eb' },
+    { name: 'Mumbai', lat: 19.0760, lng: 72.8777, color: '#059669' }
 ];
 
-// Distance for this route (approx, used in counter animation)
 const HERO_DISTANCE_KM = 1157;
 
-// ── Reduced-motion check (same pattern as utils.js:68) ──────────────
+// ── Featured Route Presets Dataset ──────────────────────────────────
+const FEATURED_ROUTES = [
+    {
+        id: 'golden-triangle',
+        title: 'Golden Triangle Heritage Circuit',
+        category: 'tourism',
+        categoryLabel: 'Heritage & Tourism',
+        origin: 'Delhi',
+        destination: 'Jaipur',
+        stops: ['Agra'],
+        distanceKm: 470,
+        timeEst: '7.5 hrs',
+        tag: 'Must Drive',
+        badgeColor: '#f59e0b',
+        petrolCost: 3950,
+        dieselCost: 2740,
+        cngCost: 1880,
+        cngSave: 2070,
+        description: 'Iconic North Indian circuit traversing the Taj Mahal in Agra and royal palaces in Jaipur.'
+    },
+    {
+        id: 'western-freight',
+        title: 'Western Industrial Freightway',
+        category: 'freight',
+        categoryLabel: 'Commercial Freight',
+        origin: 'Delhi',
+        destination: 'Mumbai',
+        stops: ['Jaipur', 'Ahmedabad', 'Surat'],
+        distanceKm: 1418,
+        timeEst: '22 hrs',
+        tag: 'Heavy Freight',
+        badgeColor: '#38bdf8',
+        petrolCost: 11940,
+        dieselCost: 8290,
+        cngCost: 5680,
+        cngSave: 6260,
+        description: 'The lifeline freight corridor connecting Delhi to Mumbai through Gujarat industrial clusters.'
+    },
+    {
+        id: 'southern-tech',
+        title: 'Southern IT & Innovation Corridor',
+        category: 'tech',
+        categoryLabel: 'Tech & Commerce',
+        origin: 'Bengaluru',
+        destination: 'Chennai',
+        stops: ['Mysuru', 'Coimbatore'],
+        distanceKm: 680,
+        timeEst: '11 hrs',
+        tag: 'Tech Hubs',
+        badgeColor: '#10b981',
+        petrolCost: 5730,
+        dieselCost: 3980,
+        cngCost: 2725,
+        cngSave: 3005,
+        description: 'Traversing southern tech hubs, automotive belts, and port terminals down to Chennai.'
+    },
+    {
+        id: 'himalayan-foothills',
+        title: 'Himalayan Foothills & Ganga Gateway',
+        category: 'tourism',
+        categoryLabel: 'Scenic Mountain',
+        origin: 'Delhi',
+        destination: 'Rishikesh',
+        stops: ['Chandigarh', 'Dehradun'],
+        distanceKm: 485,
+        timeEst: '8.5 hrs',
+        tag: 'Scenic Mountain',
+        badgeColor: '#8b5cf6',
+        petrolCost: 4090,
+        dieselCost: 2840,
+        cngCost: 1940,
+        cngSave: 2150,
+        description: 'From Delhi plains through planned city Chandigarh up to holy Ganges ghats in Rishikesh.'
+    },
+    {
+        id: 'konkan-coast',
+        title: 'Western Ghats & Konkan Coast Cruise',
+        category: 'coastal',
+        categoryLabel: 'Coastal Roadtrip',
+        origin: 'Mumbai',
+        destination: 'Goa',
+        stops: ['Pune', 'Kolhapur'],
+        distanceKm: 590,
+        timeEst: '10 hrs',
+        tag: 'Coastal Expressway',
+        badgeColor: '#06b6d4',
+        petrolCost: 4980,
+        dieselCost: 3450,
+        cngCost: 2360,
+        cngSave: 2620,
+        description: 'Crossing the Mumbai-Pune Expressway, Western Ghats hills, and descending into pristine Goan beaches.'
+    }
+];
+
+// ── Reduced-motion check ────────────────────────────────────────────
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ── Init Landing Sequence ───────────────────────────────────────────
-// Called from unlockApplication() in auth.js
 window.initLandingSequence = function () {
     if (landingInitDone) return;
     landingInitDone = true;
 
     const mapContainer = document.getElementById('hero-map-container');
-    if (!mapContainer) return;
+    if (mapContainer && typeof L !== 'undefined') {
+        heroMap = L.map('hero-map-container', {
+            zoomControl: false,
+            attributionControl: false,
+            dragging: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            touchZoom: false,
+            boxZoom: false,
+            keyboard: false
+        });
 
-    // Create the hero's own Leaflet instance
-    heroMap = L.map('hero-map-container', {
-        zoomControl: false,
-        attributionControl: false,
-        dragging: false,
-        scrollWheelZoom: false,
-        doubleClickZoom: false,
-        touchZoom: false,
-        boxZoom: false,
-        keyboard: false
-    });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18
+        }).addTo(heroMap);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-    }).addTo(heroMap);
+        const bounds = L.latLngBounds(HERO_ROUTE_COORDS);
+        heroMap.fitBounds(bounds, { padding: [30, 30] });
 
-    // Fit map to the route bounds
-    const bounds = L.latLngBounds(HERO_ROUTE_COORDS);
-    heroMap.fitBounds(bounds, { padding: [30, 30] });
-
-    // Run the sequence
-    if (reduceMotion) {
-        renderHeroStatic();
-    } else {
-        runHeroAnimation();
+        if (reduceMotion) {
+            renderHeroStatic();
+        } else {
+            runHeroAnimation();
+        }
     }
 
-    // Set up scroll reveals
+    // Initialize interactive widgets and scroll observers
+    initInteractiveHowSimulator();
     setupScrollReveals();
+    setup3DCardTilt();
 };
 
 // ── Static render (reduced motion) ──────────────────────────────────
 function renderHeroStatic() {
-    // Show tiles immediately
+    if (!heroMap) return;
     const tilePane = document.querySelector('#hero-map-container .leaflet-tile-pane');
     if (tilePane) tilePane.style.opacity = '1';
 
-    // Draw route
     heroRouteLayer = L.polyline(HERO_ROUTE_COORDS, {
         color: '#2563eb',
         weight: 5,
         opacity: 0.9
     }).addTo(heroMap);
 
-    // Place city dots
     HERO_CITIES.forEach(function (city) {
         var dot = L.circleMarker([city.lat, city.lng], {
             radius: 7,
@@ -114,36 +200,32 @@ function renderHeroStatic() {
         });
     });
 
-    // Set final counter values immediately
     setCounterValue('hero-counter-petrol', '₹6.31');
     setCounterValue('hero-counter-diesel', '₹4.38');
     setCounterValue('hero-counter-cng', '₹3.00');
     setCounterValue('hero-counter-distance', HERO_DISTANCE_KM.toLocaleString('en-IN'));
 
-    // Set headline values
     const h1Petrol = document.getElementById('hero-h1-petrol');
     const h1Cng = document.getElementById('hero-h1-cng');
     if (h1Petrol) h1Petrol.textContent = '₹6.31';
     if (h1Cng) h1Cng.textContent = '₹3.00';
 
-    // Reveal all proof figures immediately
     revealAllProofFigures();
 }
 
-// ── Animated sequence ───────────────────────────────────────────────
+// ── Animated Hero Sequence ──────────────────────────────────────────
 function runHeroAnimation() {
+    if (!heroMap) return;
     var tilePane = document.querySelector('#hero-map-container .leaflet-tile-pane');
     if (tilePane) {
         tilePane.style.opacity = '0';
         tilePane.style.transition = 'opacity 200ms cubic-bezier(0.4, 0, 0.2, 1)';
     }
 
-    // 0–200 ms: Tiles fade up
     setTimeout(function () {
         if (tilePane) tilePane.style.opacity = '1';
     }, 0);
 
-    // 200–470 ms: City dots scale in, 90ms apart
     HERO_CITIES.forEach(function (city, idx) {
         setTimeout(function () {
             var dot = L.circleMarker([city.lat, city.lng], {
@@ -161,7 +243,6 @@ function runHeroAnimation() {
                 className: 'route-polyline-tooltip'
             });
 
-            // Scale-in animation via transform on the dot's element
             var el = dot.getElement();
             if (el) {
                 el.style.transform = 'scale(0.6)';
@@ -175,7 +256,6 @@ function runHeroAnimation() {
         }, 200 + idx * 90);
     });
 
-    // 470–1400 ms: Route draws via stroke-dashoffset
     setTimeout(function () {
         heroRouteLayer = L.polyline(HERO_ROUTE_COORDS, {
             color: '#2563eb',
@@ -183,9 +263,7 @@ function runHeroAnimation() {
             opacity: 0.9
         }).addTo(heroMap);
 
-        // Animate using stroke-dashoffset on the SVG path
         var svgPath = null;
-        // Leaflet renders polylines as SVG paths
         heroMap.eachLayer(function (layer) {
             if (layer === heroRouteLayer && layer.getElement) {
                 svgPath = layer.getElement();
@@ -193,7 +271,6 @@ function runHeroAnimation() {
         });
 
         if (!svgPath) {
-            // Fallback: find the path in the overlay pane
             var overlayPane = document.querySelector('#hero-map-container .leaflet-overlay-pane svg path');
             if (overlayPane) svgPath = overlayPane;
         }
@@ -210,21 +287,109 @@ function runHeroAnimation() {
         }
     }, 470);
 
-    // 900–1600 ms: Counter count-ups
     setTimeout(function () {
         countUp('hero-counter-petrol', 0, 6.31, 700, '₹', '');
         countUp('hero-counter-diesel', 0, 4.38, 700, '₹', '');
         countUp('hero-counter-cng', 0, 3.00, 700, '₹', '');
         countUp('hero-counter-distance', 0, HERO_DISTANCE_KM, 700, '', '');
 
-        // Headline figures also count up
         countUp('hero-h1-petrol', 0, 6.31, 500, '₹', '');
         countUp('hero-h1-cng', 0, 3.00, 500, '₹', '');
     }, 900);
 }
 
+// ── Interactive "How It Works" Live Step Simulator ──────────────────
+function initInteractiveHowSimulator() {
+    const slider = document.getElementById('how-sim-slider');
+    const distText = document.getElementById('how-sim-dist-text');
+    const pCostEl = document.getElementById('how-sim-petrol');
+    const dCostEl = document.getElementById('how-sim-diesel');
+    const cCostEl = document.getElementById('how-sim-cng');
+    const saveBadge = document.getElementById('how-sim-savings');
+    const pBar = document.getElementById('how-sim-pbar');
+    const cBar = document.getElementById('how-sim-cbar');
+
+    if (!slider) return;
+
+    function recalc() {
+        const km = parseFloat(slider.value) || 350;
+        if (distText) distText.textContent = `${km} km`;
+
+        // Baseline: Petrol (15 km/l @ ₹94.72), Diesel (20 km/l @ ₹87.62), CNG (25 km/kg @ ₹75.09)
+        const pTotal = Math.round((km / 15) * 94.72);
+        const dTotal = Math.round((km / 20) * 87.62);
+        const cTotal = Math.round((km / 25) * 75.09);
+        const saved = Math.max(0, pTotal - cTotal);
+
+        if (pCostEl) pCostEl.textContent = `₹${pTotal.toLocaleString('en-IN')}`;
+        if (dCostEl) dCostEl.textContent = `₹${dTotal.toLocaleString('en-IN')}`;
+        if (cCostEl) cCostEl.textContent = `₹${cTotal.toLocaleString('en-IN')}`;
+        if (saveBadge) saveBadge.textContent = `Save ₹${saved.toLocaleString('en-IN')} on CNG`;
+
+        if (pBar) pBar.style.width = '100%';
+        if (cBar && pTotal > 0) {
+            const ratio = Math.round((cTotal / pTotal) * 100);
+            cBar.style.width = `${Math.min(100, Math.max(25, ratio))}%`;
+        }
+    }
+
+    slider.addEventListener('input', recalc);
+    recalc();
+}
+
+// ── Featured Example Routes Handlers ────────────────────────────────
+window.filterExampleRoutes = function (category) {
+    document.querySelectorAll('.example-filter-pill').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === category);
+    });
+
+    const cards = document.querySelectorAll('.example-route-card');
+    cards.forEach(function (card) {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+            card.style.display = 'flex';
+            card.classList.remove('animate-fade-in');
+            void card.offsetWidth; // Trigger reflow
+            card.classList.add('animate-fade-in');
+        } else {
+            card.style.display = 'none';
+        }
+    });
+};
+
+window.launchExampleFromCard = function (routeId) {
+    const route = FEATURED_ROUTES.find(function (r) { return r.id === routeId; });
+    if (!route) return;
+    if (typeof loadRoutePreset === 'function') {
+        loadRoutePreset(route.origin, route.destination, route.stops);
+    }
+};
+
+// ── 3D Card Hover Physics ───────────────────────────────────────────
+function setup3DCardTilt() {
+    if (reduceMotion) return;
+    const cards = document.querySelectorAll('.tilt-card');
+    cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            const dx = (x - cx) / cx;
+            const dy = (y - cy) / cy;
+            const rx = -dy * 6;
+            const ry = dx * 6;
+            card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+        });
+
+        card.addEventListener('mouseleave', function () {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+        });
+    });
+}
+
 // ── Count-up utility ────────────────────────────────────────────────
-// Uses easeOutCubic: 1 - Math.pow(1 - t, 3)
 function countUp(elementId, start, end, duration, prefix, suffix) {
     var el = document.getElementById(elementId);
     if (!el) return;
@@ -240,7 +405,6 @@ function countUp(elementId, start, end, duration, prefix, suffix) {
     function step(timestamp) {
         if (!startTime) startTime = timestamp;
         var t = Math.min((timestamp - startTime) / duration, 1);
-        // Ease-out cubic
         var eased = 1 - Math.pow(1 - t, 3);
         var current = start + (end - start) * eased;
 
@@ -268,21 +432,13 @@ function setCounterValue(id, value) {
     if (el) el.textContent = value;
 }
 
-// ── Scroll Reveals ──────────────────────────────────────────────────
-// One IntersectionObserver, threshold 0.4, unobserve after firing.
+// ── Scroll Reveals & Dynamic Animations ─────────────────────────────
 function setupScrollReveals() {
     if (reduceMotion) {
-        // Show everything immediately
-        document.querySelectorAll('.landing-reveal').forEach(function (el) {
-            el.classList.add('revealed');
+        document.querySelectorAll('.landing-reveal, .rw-reveal, .how-step-interactive, .example-route-card').forEach(function (el) {
+            el.classList.add('revealed', 'rw-visible');
             el.style.opacity = '1';
             el.style.transform = 'none';
-        });
-        document.querySelectorAll('.rw-reveal').forEach(function (el) {
-            el.classList.add('rw-visible');
-        });
-        document.querySelectorAll('.how-step').forEach(function (el) {
-            el.classList.add('revealed');
         });
         revealAllProofFigures();
         return;
@@ -291,11 +447,9 @@ function setupScrollReveals() {
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-
             var target = entry.target;
             observer.unobserve(target);
 
-            // Band 2: proof figures count up staggered
             if (target.id === 'landing-proof') {
                 var figures = target.querySelectorAll('.proof-figure');
                 figures.forEach(function (fig, idx) {
@@ -303,58 +457,51 @@ function setupScrollReveals() {
                         var endVal = parseFloat(fig.getAttribute('data-value'));
                         var prefix = fig.getAttribute('data-prefix') || '';
                         var suffix = fig.getAttribute('data-suffix') || '';
-                        var isInt = fig.getAttribute('data-integer') === 'true';
-                        if (isInt) {
-                            countUp(fig.id, 0, endVal, 600, prefix, suffix);
-                        } else {
-                            countUp(fig.id, 0, endVal, 600, prefix, suffix);
-                        }
+                        countUp(fig.id, 0, endVal, 600, prefix, suffix);
                     }, idx * 60);
                 });
             }
 
-            // Band 3: how-it-works panels with icons + connector lines
             if (target.id === 'landing-how') {
-                var steps = target.querySelectorAll('.how-step');
+                var steps = target.querySelectorAll('.how-step-interactive');
+                var connector = target.querySelector('.how-interactive-pipeline-track');
+                if (connector) connector.classList.add('active');
+
                 steps.forEach(function (step, idx) {
                     setTimeout(function () {
-                        step.style.opacity = '0';
-                        step.style.transform = 'translateY(12px)';
-                        step.style.transition = 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-                        requestAnimationFrame(function () {
-                            requestAnimationFrame(function () {
-                                step.style.opacity = '1';
-                                step.style.transform = 'translateY(0)';
-                                step.classList.add('revealed');
-                            });
-                        });
-                    }, idx * 150);
+                        step.classList.add('revealed');
+                    }, idx * 130);
                 });
             }
 
-            // Band 4: annual saving count up + comparison bar
+            if (target.id === 'landing-examples') {
+                var cards = target.querySelectorAll('.example-route-card');
+                cards.forEach(function (card, idx) {
+                    setTimeout(function () {
+                        card.classList.add('revealed');
+                    }, idx * 100);
+                });
+            }
+
             if (target.id === 'landing-receipt') {
                 target.classList.add('revealed');
                 countUp('receipt-annual-save', 0, 38131, 800, '₹', '');
 
-                // Fill the comparison bars (uses .anim-progress-fill pattern)
                 setTimeout(function () {
                     var petrolBar = document.getElementById('receipt-bar-petrol');
                     var cngBar = document.getElementById('receipt-bar-cng');
                     if (petrolBar) petrolBar.style.width = '100%';
-                    if (cngBar) cngBar.style.width = '47.5%'; // 3.00/6.31 ≈ 47.5%
+                    if (cngBar) cngBar.style.width = '47.5%';
                 }, 200);
             }
         });
-    }, { threshold: 0.4 });
+    }, { threshold: 0.25 });
 
-    // Observe the bands that get reveals
-    ['landing-proof', 'landing-how', 'landing-receipt'].forEach(function (id) {
+    ['landing-proof', 'landing-how', 'landing-examples', 'landing-receipt'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) observer.observe(el);
     });
 
-    // Global scroll reveal for .rw-reveal elements (contact cards, etc.)
     var rwRevealObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;

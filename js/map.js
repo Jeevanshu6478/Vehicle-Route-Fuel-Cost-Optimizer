@@ -99,12 +99,33 @@ document.querySelectorAll('.city-chip').forEach(chip => {
     });
 });
 
+window.loadRoutePreset = (origin, dest, stops = []) => {
+    const originEl = document.getElementById('origin-city-input');
+    const destEl = document.getElementById('dest-city-input');
+    if (originEl) originEl.value = origin;
+    if (destEl) destEl.value = dest;
+    
+    intermediateStops = stops.map(s => {
+        if (typeof s === 'string') {
+            const found = typeof findCity === 'function' ? findCity(s) : null;
+            return found || { name: s, lat: 0, lng: 0 };
+        }
+        return s;
+    }).filter(s => s && s.name);
+
+    if (typeof renderIntermediateStops === 'function') renderIntermediateStops();
+    if (typeof switchTab === 'function') switchTab('optimizer');
+    
+    setTimeout(() => {
+        if (typeof runRouteOptimization === 'function') runRouteOptimization();
+        const resultsEl = document.getElementById('results-card');
+        if (resultsEl) resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+    showToast(`Loaded route "${origin} ➔ ${dest}"!`, 'success');
+};
+
 document.getElementById('btn-quick-delhi-mumbai')?.addEventListener('click', () => {
-    document.getElementById('origin-city-input').value = 'Delhi';
-    document.getElementById('dest-city-input').value   = 'Mumbai';
-    intermediateStops = [{ name: 'Jaipur', lat: 26.9124, lng: 75.7873 }];
-    renderIntermediateStops();
-    runRouteOptimization();
+    loadRoutePreset('Delhi', 'Mumbai', ['Jaipur', 'Ahmedabad']);
 });
 
 // ── Fuel Type Switching ──────────────────────────────────────────
