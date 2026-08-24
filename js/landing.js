@@ -278,6 +278,12 @@ function setupScrollReveals() {
             el.style.opacity = '1';
             el.style.transform = 'none';
         });
+        document.querySelectorAll('.rw-reveal').forEach(function (el) {
+            el.classList.add('rw-visible');
+        });
+        document.querySelectorAll('.how-step').forEach(function (el) {
+            el.classList.add('revealed');
+        });
         revealAllProofFigures();
         return;
     }
@@ -307,19 +313,22 @@ function setupScrollReveals() {
                 });
             }
 
-            // Band 3: how-it-works panels fadeIn staggered
+            // Band 3: how-it-works panels with icons + connector lines
             if (target.id === 'landing-how') {
                 var steps = target.querySelectorAll('.how-step');
                 steps.forEach(function (step, idx) {
                     setTimeout(function () {
                         step.style.opacity = '0';
-                        step.style.transform = 'translateY(6px)';
-                        step.classList.add('revealed');
-                        // Trigger fadeIn animation
+                        step.style.transform = 'translateY(12px)';
+                        step.style.transition = 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
                         requestAnimationFrame(function () {
-                            step.style.animation = 'fadeIn 0.3s ease-out both';
+                            requestAnimationFrame(function () {
+                                step.style.opacity = '1';
+                                step.style.transform = 'translateY(0)';
+                                step.classList.add('revealed');
+                            });
                         });
-                    }, idx * 80);
+                    }, idx * 150);
                 });
             }
 
@@ -343,6 +352,22 @@ function setupScrollReveals() {
     ['landing-proof', 'landing-how', 'landing-receipt'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) observer.observe(el);
+    });
+
+    // Global scroll reveal for .rw-reveal elements (contact cards, etc.)
+    var rwRevealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            rwRevealObserver.unobserve(entry.target);
+            var delay = parseFloat(entry.target.getAttribute('data-delay') || '0');
+            setTimeout(function () {
+                entry.target.classList.add('rw-visible');
+            }, delay * 1000);
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.rw-reveal').forEach(function (el) {
+        rwRevealObserver.observe(el);
     });
 }
 
