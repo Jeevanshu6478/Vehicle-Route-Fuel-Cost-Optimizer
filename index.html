@@ -78,11 +78,15 @@
     </div>
 
     <!-- ================================================================
-         2. AUTH GATEWAY VIEW (Displayed first when not logged in)
+         2. AUTH GATEWAY VIEW (Displayed first when not logged in or on demand)
          ================================================================ -->
     <div id="auth-gateway-view">
         <div class="container d-flex justify-content-center">
             <div class="auth-portal-card row g-0 animate-pop">
+                <!-- Close Button to dismiss back to Guest Mode -->
+                <button type="button" class="auth-gateway-close-btn" onclick="hideAuthGateway()" title="Close / Continue in Guest Mode" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
                 
                 <!-- Left Side: Hero & Value Proposition -->
                 <div class="col-lg-5 auth-hero-side">
@@ -136,13 +140,13 @@
                     <!-- SIGN IN FORM -->
                     <form id="gateway-signin-form">
                         <h4 class="fw-bold text-dark mb-1">Welcome to RouteWise!</h4>
-                        <p class="text-muted small mb-4">Log in to compute road distances, map routes, and calculate fuel economics.</p>
+                        <p class="text-muted small mb-4">Log in to compute road distances, save trips, and sync fuel economics.</p>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold text-muted">Email or Username</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-envelope text-muted"></i></span>
-                                <input type="text" class="form-control border-start-0" id="gateway-signin-email" placeholder="driver@example.com" value="driver@routewise.in" required>
+                                <input type="text" class="form-control border-start-0" id="gateway-signin-email" placeholder="name@example.com" required>
                             </div>
                         </div>
 
@@ -150,7 +154,7 @@
                             <label class="form-label small fw-semibold text-muted">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-lock text-muted"></i></span>
-                                <input type="password" class="form-control border-start-0" id="gateway-signin-password" placeholder="••••••••" value="password123" required>
+                                <input type="password" class="form-control border-start-0" id="gateway-signin-password" placeholder="••••••••" required>
                             </div>
                         </div>
 
@@ -159,23 +163,17 @@
                                 <input class="form-check-input" type="checkbox" id="gateway-remember" checked>
                                 <label class="form-check-label small text-muted" for="gateway-remember">Remember me</label>
                             </div>
-                            <a href="#" class="small text-decoration-none text-primary" onclick="showToast('Click any 1-Click Instant Demo Login button below!', 'info')">Need help?</a>
+                            <a href="#" class="small text-decoration-none text-primary" onclick="setGatewayAuthMode('signup')">Create account</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary-custom w-100 py-2 fs-6 mb-3">
                             <i class="fas fa-key me-2"></i> Log In & Launch RouteWise
                         </button>
 
-                        <div class="p-3 bg-light rounded-3 border text-center">
-                            <span class="text-muted small d-block mb-2 fw-semibold">⚡ Quick 1-Click Instant Logins:</span>
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill fw-semibold px-3" id="btn-quick-cng-driver">
-                                    🚗 CNG Driver (25 km/kg)
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold px-3" id="btn-quick-fleet-mgr">
-                                    🚚 Fleet Manager (Diesel)
-                                </button>
-                            </div>
+                        <div class="text-center pt-2 border-top">
+                            <button type="button" class="btn btn-outline-secondary w-100 py-2 rounded-pill fw-semibold" onclick="hideAuthGateway(); enterGuestMode();">
+                                <i class="fas fa-user-clock me-2"></i> Continue as Guest (Explore Features)
+                            </button>
                         </div>
                     </form>
 
@@ -223,9 +221,15 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success-custom w-100 py-2 fs-6">
+                        <button type="submit" class="btn btn-success-custom w-100 py-2 fs-6 mb-3">
                             <i class="fas fa-user-check me-2"></i> Register & Open RouteWise
                         </button>
+
+                        <div class="text-center pt-2 border-top">
+                            <button type="button" class="btn btn-outline-secondary w-100 py-2 rounded-pill fw-semibold" onclick="hideAuthGateway(); enterGuestMode();">
+                                <i class="fas fa-user-clock me-2"></i> Continue as Guest (Explore Features)
+                            </button>
+                        </div>
                     </form>
 
                 </div>
@@ -275,30 +279,34 @@
                         </li>
                     </ul>
 
-                    <div class="d-flex align-items-center gap-3 flex-nowrap">
-                        <div class="nav-fuel-ticker d-none d-lg-flex" title="Reference Average Metro Rates">
-                            <span class="ticker-dot"></span>
-                            <span class="ticker-fuel ticker-petrol"><i class="fas fa-burn me-1"></i>Petrol <strong>₹94.7</strong></span>
-                            <span class="ticker-divider">|</span>
-                            <span class="ticker-fuel ticker-diesel"><i class="fas fa-oil-can me-1"></i>Diesel <strong>₹87.6</strong></span>
-                            <span class="ticker-divider">|</span>
-                            <span class="ticker-fuel ticker-cng"><i class="fas fa-leaf me-1"></i>CNG <strong>₹75.1</strong></span>
-                        </div>
-
-                        <!-- User Profile Dropdown -->
+                    <div class="d-flex align-items-center gap-3 flex-nowrap ms-auto">
+                        <!-- User Profile Dropdown / Guest Mode -->
                         <div id="auth-nav-container">
                             <div class="dropdown">
-                                <div class="user-profile-badge dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="user-avatar-mini" id="nav-user-avatar">U</span>
-                                    <span class="d-none d-sm-inline fw-bold" id="nav-user-name">User</span>
+                                <div class="user-profile-badge dropdown-toggle guest-badge-glow" data-bs-toggle="dropdown" aria-expanded="false" title="Guest Mode Active - Click to Sign In">
+                                    <span class="user-avatar-mini guest-avatar-bg"><i class="fas fa-user"></i></span>
+                                    <span class="d-none d-sm-inline fw-bold">Guest Mode</span>
                                 </div>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                    <li><h6 class="dropdown-header">Active Session</h6></li>
-                                    <li><span class="dropdown-item-text small text-muted" id="nav-user-email">user@routewise.in</span></li>
-                                    <li><span class="dropdown-item-text small fw-bold" id="nav-user-vehicle">Vehicle: CNG (25 km/kg)</span></li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 230px;">
+                                    <li>
+                                        <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-user-clock me-1 text-primary"></i> Guest Mode</span>
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Unlocked</span>
+                                        </h6>
+                                    </li>
+                                    <li><span class="dropdown-item-text small text-muted">All route & fuel tools active</span></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-primary" href="#" onclick="openSavedRoutesModal()"><i class="fas fa-bookmark me-2"></i>My Saved Trips</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                                    <li>
+                                        <a class="dropdown-item text-primary fw-bold" href="#" onclick="showAuthGateway('signin')">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Sign In / Register
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-secondary small" href="#" onclick="openSavedRoutesModal()">
+                                            <i class="fas fa-bookmark me-2"></i>My Saved Trips <span class="badge bg-light text-muted border ms-1">Account</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -1274,6 +1282,41 @@
                         <div id="saved-routes-list-modal">
                             <p class="text-muted text-center my-4">No saved trips found yet. Calculate a route and click "Save Trip"!</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest Save Trip Prompt Modal -->
+        <div class="modal fade" id="guestSavePromptModal" tabindex="-1" aria-labelledby="guestSavePromptModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg, 16px); overflow: hidden;">
+                    <div class="modal-header bg-dark text-white border-0 py-3">
+                        <h5 class="modal-title fw-bold" id="guestSavePromptModalLabel">
+                            <i class="fas fa-bookmark text-warning me-2"></i>Save Trip to Account
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <div class="mb-3">
+                            <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 64px; height: 64px; font-size: 28px;">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Account Required to Save Trips</h5>
+                        <p class="text-muted small mb-4">
+                            You are exploring RouteWise in <strong>Guest Mode</strong>. All route optimization, map routing, and fuel calculations are free and unlimited. To save your calculated trips and access them anytime, please sign in or register an account.
+                        </p>
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="button" class="btn btn-primary-custom py-2 fw-semibold" onclick="handleGuestPromptSignIn()">
+                                <i class="fas fa-sign-in-alt me-2"></i> Sign In / Create Account
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-0 py-2 justify-content-center">
+                        <button type="button" class="btn btn-sm btn-link text-muted text-decoration-none" data-bs-dismiss="modal">
+                            Continue in Guest Mode without saving
+                        </button>
                     </div>
                 </div>
             </div>

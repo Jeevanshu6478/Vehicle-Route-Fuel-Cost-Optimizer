@@ -22,11 +22,11 @@ An algorithmic, user-friendly web application designed to optimize multi-stop ve
 - Reference rates for 15+ major cities (New Delhi, Mumbai, Bengaluru, Kolkata, Chennai, Hyderabad, Ahmedabad, Pune, Jaipur, Chandigarh, Lucknow, Surat, Bhopal, Patna, Kochi).
 - 1-Click "Apply to Route" to directly load any city's fuel rate into the optimizer.
 
-### 4. User Authentication & Post-Login Car Animation
-- **Sign In & Sign Up**: Session management saved securely in `localStorage`.
-- **1-Click Demo Accounts**: Instant test login for "CNG Driver" and "Fleet Manager".
+### 4. User Authentication & Guest Mode
+- **Guest Mode by Default**: Direct access to all route planning, mapping, comparison, and rate features without requiring an account.
+- **Sign In & Sign Up**: Account registration and session management saved securely in `localStorage`.
 - **Animated Car Transition Screen**: Full-screen driving animation with road markings and status indicator upon logging in.
-- **Trip Bookmarking**: Save optimized itineraries with full stop list, distance, and costs.
+- **Trip Bookmarking**: Save optimized itineraries with full stop list, distance, and costs to user accounts.
 
 ### 5. About & Mission Page
 - RouteWise mission overview, core value pillars, creator background, and interactive community feedback form.

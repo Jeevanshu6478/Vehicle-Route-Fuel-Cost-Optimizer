@@ -1,6 +1,6 @@
 /**
  * RouteWise — auth.js
- * Account Database, Login, Signup, Logout, Session restore, Car animation.
+ * Account Database, Login, Signup, Logout, Guest Mode, Session restore, Car animation.
  * Depends on: config.js, utils.js
  */
 
@@ -11,6 +11,15 @@ const DEFAULT_SEED_USERS = [
     { name: "Vikram Kumar", email: "driver@routewise.in", password: "password123", fuel: "cng", mileage: 25 },
     { name: "Ananya Sharma", email: "fleet@routewise.in", password: "password123", fuel: "diesel", mileage: 20 }
 ];
+
+function getStoredSessionUser() {
+    try {
+        const stored = localStorage.getItem('routeWiseUser');
+        return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+        return null;
+    }
+}
 
 function getRegisteredUsers() {
     const stored = localStorage.getItem('routeWiseUsers');
@@ -66,9 +75,10 @@ document.getElementById('gateway-signin-form')?.addEventListener('submit', (e) =
     );
 
     if (matchedUser) {
+        hideAuthGateway();
         triggerLoginSequence(matchedUser);
     } else {
-        showToast("Invalid email or password. Please check your credentials or create an account.", "error");
+        showToast("Invalid email or password. Please check credentials or create an account.", "error");
     }
 });
 
@@ -106,6 +116,7 @@ document.getElementById('gateway-signup-form')?.addEventListener('submit', (e) =
     users.push(newUser);
     saveRegisteredUsers(users);
 
+    hideAuthGateway();
     triggerLoginSequence(newUser);
 });
 
@@ -142,9 +153,17 @@ function triggerLoginSequence(userObj) {
             overlay.classList.remove('active');
             unlockApplication();
             showToast(`Welcome back to RouteWise, ${userObj.name}!`, 'success');
+
+            // If a trip was pending to save from guest prompt, save it now
+            if (typeof processPendingTripSave === 'function') {
+                processPendingTripSave();
+            }
         }, 2200);
     } else {
         unlockApplication();
+        if (typeof processPendingTripSave === 'function') {
+            processPendingTripSave();
+        }
     }
 }
 
@@ -157,6 +176,78 @@ function getUserInitials(name) {
     return words[0].charAt(0).toUpperCase();
 }
 
+// ── Dynamic Navbar Rendering (Guest vs Logged In) ────────────────
+function renderAuthNavbar() {
+    const authNavContainer = document.getElementById('auth-nav-container');
+    if (!authNavContainer) return;
+
+    if (currentUser) {
+        // Authenticated State
+        const initials = getUserInitials(currentUser.name);
+        const fuelUpper = (currentUser.fuel || 'CNG').toUpperCase();
+        const mileage = currentUser.mileage || 25;
+        const savedCount = (typeof savedRoutes !== 'undefined' && Array.isArray(savedRoutes)) ? savedRoutes.length : 0;
+
+        authNavContainer.innerHTML = `
+            <div class="dropdown">
+                <div class="user-profile-badge dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Click to view account">
+                    <span class="user-avatar-mini">${initials}</span>
+                    <span class="d-none d-sm-inline fw-bold">${currentUser.name}</span>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li>
+                        <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user-check me-1 text-success"></i> Signed In</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                        </h6>
+                    </li>
+                    <li><span class="dropdown-item-text small text-muted text-truncate d-block" style="max-width: 210px;">${currentUser.email}</span></li>
+                    <li><span class="dropdown-item-text small fw-bold text-dark"><i class="fas fa-car me-1 text-primary"></i> ${fuelUpper} · ${mileage} km/unit</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-primary fw-semibold d-flex justify-content-between align-items-center" href="#" onclick="openSavedRoutesModal()">
+                            <span><i class="fas fa-bookmark me-2"></i>My Saved Trips</span>
+                            <span class="badge bg-primary rounded-pill" id="saved-count-badge">${savedCount}</span>
+                        </a>
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Sign Out to Guest</a></li>
+                </ul>
+            </div>
+        `;
+    } else {
+        // Guest Mode State
+        authNavContainer.innerHTML = `
+            <div class="dropdown">
+                <div class="user-profile-badge dropdown-toggle guest-badge-glow" data-bs-toggle="dropdown" aria-expanded="false" title="Guest Mode Active - Click to Sign In">
+                    <span class="user-avatar-mini guest-avatar-bg"><i class="fas fa-user"></i></span>
+                    <span class="d-none d-sm-inline fw-bold">Guest Mode</span>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 230px;">
+                    <li>
+                        <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user-clock me-1 text-primary"></i> Guest Mode</span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Unlocked</span>
+                        </h6>
+                    </li>
+                    <li><span class="dropdown-item-text small text-muted">All route & fuel tools active</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-primary fw-bold" href="#" onclick="showAuthGateway('signin')">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In / Register
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-secondary small" href="#" onclick="openSavedRoutesModal()">
+                            <i class="fas fa-bookmark me-2"></i>My Saved Trips <span class="badge bg-light text-muted border ms-1">Account</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        `;
+    }
+}
+
 function unlockApplication() {
     const authGateway    = document.getElementById('auth-gateway-view');
     const mainAppWrapper  = document.getElementById('main-app-wrapper');
@@ -164,12 +255,9 @@ function unlockApplication() {
     if (authGateway)    authGateway.style.display   = 'none';
     if (mainAppWrapper) mainAppWrapper.style.display = 'block';
 
-    if (currentUser) {
-        if (document.getElementById('nav-user-name'))    document.getElementById('nav-user-name').textContent    = currentUser.name;
-        if (document.getElementById('nav-user-email'))   document.getElementById('nav-user-email').textContent   = currentUser.email;
-        if (document.getElementById('nav-user-avatar'))  document.getElementById('nav-user-avatar').textContent  = getUserInitials(currentUser.name);
-        if (document.getElementById('nav-user-vehicle')) document.getElementById('nav-user-vehicle').textContent = `Vehicle: ${currentUser.fuel.toUpperCase()} (${currentUser.mileage} km/unit)`;
+    renderAuthNavbar();
 
+    if (currentUser) {
         const fuelBtn = document.querySelector(`.fuel-btn[data-fuel="${currentUser.fuel}"]`);
         if (fuelBtn) fuelBtn.click();
 
@@ -185,11 +273,18 @@ function unlockApplication() {
     if (typeof initLandingSequence === 'function') initLandingSequence();
 }
 
+// ── Guest Mode ───────────────────────────────────────────────────
+window.enterGuestMode = () => {
+    currentUser = null;
+    localStorage.removeItem('routeWiseUser');
+    unlockApplication();
+};
+
 // ── Logout ───────────────────────────────────────────────────────
 window.logoutUser = () => {
     currentUser = null;
-    savedRoutes = [];
     localStorage.removeItem('routeWiseUser');
+    if (typeof refreshSavedRoutesForCurrentUser === 'function') refreshSavedRoutesForCurrentUser();
 
     // Reset input fields
     const signinEmail = document.getElementById('gateway-signin-email');
@@ -197,53 +292,33 @@ window.logoutUser = () => {
     if (signinEmail) signinEmail.value = '';
     if (signinPass)  signinPass.value  = '';
 
-    const mainAppWrapper = document.getElementById('main-app-wrapper');
-    const authGateway    = document.getElementById('auth-gateway-view');
-
-    if (mainAppWrapper) mainAppWrapper.style.display = 'none';
-    if (authGateway)    authGateway.style.display    = 'flex';
-
-    setGatewayAuthMode('signin');
-    showToast("Signed out successfully from RouteWise", "info");
+    // Seamlessly transition to Guest Mode without blocking user
+    enterGuestMode();
+    showToast("Signed out. Switched to Guest Mode.", "info");
 };
 
-// ── Guest Mode ───────────────────────────────────────────────────
-window.enterGuestMode = () => {
-    // Nav dropdown: guest state
-    const navName    = document.getElementById('nav-user-name');
-    const navAvatar  = document.getElementById('nav-user-avatar');
-    const navEmail   = document.getElementById('nav-user-email');
-    const navVehicle = document.getElementById('nav-user-vehicle');
-    if (navName)    navName.textContent    = 'Guest';
-    if (navAvatar)  navAvatar.textContent  = 'G';
-    if (navEmail)   navEmail.textContent   = 'Not signed in';
-    if (navVehicle) navVehicle.textContent = 'Vehicle: CNG (25 km/kg) · defaults';
-
-    // Dropdown header: change "Active Session" → "Guest"
-    const dropHeader = document.querySelector('#auth-nav-container .dropdown-header');
-    if (dropHeader) dropHeader.textContent = 'Guest';
-
-    // Hide the "Sign Out" link for guests (leave it in DOM)
-    const signOutLink = document.querySelector('#auth-nav-container a[onclick="logoutUser()"]');
-    if (signOutLink) signOutLink.style.display = 'none';
-
-    // Add a "Sign in" link for guests (only if not already added)
-    if (!document.getElementById('guest-sign-in-link')) {
-        const signInLi = document.createElement('li');
-        signInLi.id = 'guest-sign-in-link';
-        signInLi.innerHTML = '<a class="dropdown-item text-primary" href="#" onclick="showAuthGateway()"><i class="fas fa-sign-in-alt me-2"></i>Sign in</a>';
-        // Insert after the divider, before the saved-trips link
-        const dropMenu = document.querySelector('#auth-nav-container .dropdown-menu');
-        if (dropMenu) dropMenu.appendChild(signInLi);
-    }
-};
-
-// ── Auth Gateway (re-show sign-in forms) ─────────────────────────
-window.showAuthGateway = () => {
+// ── Auth Gateway Controls ─────────────────────────────────────────
+window.showAuthGateway = (mode = 'signin') => {
     const authGateway = document.getElementById('auth-gateway-view');
     if (authGateway) {
         authGateway.style.display = 'flex';
-        setGatewayAuthMode('signin');
+        setGatewayAuthMode(mode);
     }
 };
 
+window.hideAuthGateway = () => {
+    const authGateway = document.getElementById('auth-gateway-view');
+    if (authGateway) {
+        authGateway.style.display = 'none';
+    }
+};
+
+// ── Guest Modal Helpers ───────────────────────────────────────────
+window.handleGuestPromptSignIn = () => {
+    const modalEl = document.getElementById('guestSavePromptModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+    }
+    showAuthGateway('signin');
+};
