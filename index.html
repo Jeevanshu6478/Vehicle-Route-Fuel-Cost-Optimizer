@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="RouteWise - Smart Vehicle Route & Multi-Fuel Cost Optimizer. Plan From-to journeys across India and compare Petrol, Diesel, and CNG travel costs.">
-    <title>RouteWise - Vehicle Route & Fuel Cost Optimizer</title>
+    <title>RouteWise- Vehicle Route & Fuel Cost Optimizer</title>
     
     <!-- Typefaces: Inter for language, JetBrains Mono for every figure -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -142,7 +142,7 @@
                             <label class="form-label small fw-semibold text-muted">Email or Username</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-envelope text-muted"></i></span>
-                                <input type="text" class="form-control border-start-0" id="gateway-signin-email" placeholder="Enter your email or username" required>
+                                <input type="text" class="form-control border-start-0" id="gateway-signin-email" placeholder="driver@example.com" value="driver@routewise.in" required>
                             </div>
                         </div>
 
@@ -150,7 +150,7 @@
                             <label class="form-label small fw-semibold text-muted">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-lock text-muted"></i></span>
-                                <input type="password" class="form-control border-start-0" id="gateway-signin-password" placeholder="Enter your password" required>
+                                <input type="password" class="form-control border-start-0" id="gateway-signin-password" placeholder="••••••••" value="password123" required>
                             </div>
                         </div>
 
@@ -159,12 +159,24 @@
                                 <input class="form-check-input" type="checkbox" id="gateway-remember" checked>
                                 <label class="form-check-label small text-muted" for="gateway-remember">Remember me</label>
                             </div>
-                            <a href="#" class="small text-decoration-none text-primary" onclick="showToast('If you don\'t have an account, click Create Account above to register!', 'info')">Need help?</a>
+                            <a href="#" class="small text-decoration-none text-primary" onclick="showToast('Click any 1-Click Instant Demo Login button below!', 'info')">Need help?</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary-custom w-100 py-2 fs-6 mb-3">
                             <i class="fas fa-key me-2"></i> Log In & Launch RouteWise
                         </button>
+
+                        <div class="p-3 bg-light rounded-3 border text-center">
+                            <span class="text-muted small d-block mb-2 fw-semibold">⚡ Quick 1-Click Instant Logins:</span>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill fw-semibold px-3" id="btn-quick-cng-driver">
+                                    🚗 CNG Driver (25 km/kg)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold px-3" id="btn-quick-fleet-mgr">
+                                    🚚 Fleet Manager (Diesel)
+                                </button>
+                            </div>
+                        </div>
                     </form>
 
                     <!-- SIGN UP FORM -->
