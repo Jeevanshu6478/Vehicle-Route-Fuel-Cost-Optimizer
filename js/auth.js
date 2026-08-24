@@ -167,6 +167,47 @@ function triggerLoginSequence(userObj) {
     }
 }
 
+// ── Initial Website Load Screen Animation ─────────────────────────
+window.triggerInitialLoadingSequence = (userObj) => {
+    if (userObj) {
+        currentUser = userObj;
+        if (typeof refreshSavedRoutesForCurrentUser === 'function') refreshSavedRoutesForCurrentUser();
+    } else {
+        currentUser = null;
+    }
+
+    const overlay   = document.getElementById('car-transition-overlay');
+    const progress  = document.getElementById('car-anim-progress');
+    const title     = document.getElementById('car-anim-title');
+    const subtitle  = document.getElementById('car-anim-subtitle');
+
+    if (overlay) {
+        overlay.classList.add('active');
+        if (progress) progress.style.width = '0%';
+        if (title)    title.textContent    = "Starting Your Engine...";
+        if (subtitle) subtitle.textContent = userObj ? `Restoring profile for ${userObj.name}...` : "Calibrating Highway Networks & Fuel Prices...";
+
+        setTimeout(() => {
+            if (progress) progress.style.width = '55%';
+            if (title)    title.textContent    = "Connecting Satellite Road Graphs...";
+            if (subtitle) subtitle.textContent = "Loading 4,000+ Indian road networks and live fuel rates...";
+        }, 550);
+
+        setTimeout(() => {
+            if (progress) progress.style.width = '100%';
+            if (title)    title.textContent    = userObj ? `Welcome back, ${userObj.name}!` : "Welcome to RouteWise!";
+            if (subtitle) subtitle.textContent = "Launching RouteWise Journey Planner...";
+        }, 1200);
+
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            unlockApplication();
+        }, 1800);
+    } else {
+        unlockApplication();
+    }
+};
+
 function getUserInitials(name) {
     if (!name) return 'U';
     const words = name.trim().split(/\s+/);
