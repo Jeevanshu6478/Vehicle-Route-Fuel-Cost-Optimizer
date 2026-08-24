@@ -20,7 +20,8 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: var(--ink);
+    background: #0f172a !important;
+    color: #ffffff !important;
     /* Same plotting grid as the sign-in canvas. */
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),

@@ -1,8 +1,11 @@
 /**
  * RouteWise — saved-routes.js
  * Save, load, delete and display bookmarked trips.
+ * Guest Mode safe: prompts user when saving requires account login.
  * Depends on: utils.js, map.js (runRouteOptimization, renderIntermediateStops)
  */
+
+let pendingTripToSave = null;
 
 function getSavedRoutesStorageKey() {
     const accountId = currentUser?.email?.trim().toLowerCase();
@@ -38,12 +41,31 @@ function updateSavedCountBadge() {
     if (badge) badge.textContent = savedRoutes.length;
 }
 
+// ── Internal Helper to Persist a Trip Object ──────────────────────
+function saveTripData(tripObj) {
+    if (!tripObj) return;
+    savedRoutes.unshift(tripObj);
+    persistSavedRoutes();
+    updateSavedCountBadge();
+    showToast(`Saved trip "${tripObj.title}" to your account!`, 'success');
+}
+
+// ── Process Pending Trip Saved from Guest Prompt ──────────────────
+window.processPendingTripSave = () => {
+    if (pendingTripToSave && currentUser) {
+        saveTripData(pendingTripToSave);
+        pendingTripToSave = null;
+    }
+};
+
 // ── Save Current Trip ─────────────────────────────────────────────
 document.getElementById('btn-save-current-route')?.addEventListener('click', () => {
-    if (!currentTripResult) { showToast('Please calculate a route first before saving.', 'warning'); return; }
+    if (!currentTripResult) { 
+        showToast('Please calculate a route first before saving.', 'warning'); 
+        return; 
+    }
 
-    // Fix #6 — also save current fuel settings so they restore on load
-    const newSaved = {
+    const tripObj = {
         id:        Date.now(),
         title:     `${currentTripResult.origin} to ${currentTripResult.destination}`,
         stops:     [...currentTripResult.orderedStops],
@@ -55,16 +77,50 @@ document.getElementById('btn-save-current-route')?.addEventListener('click', () 
         cityName:  currentTripResult.selectedCityName || 'Reference (Delhi)',
         date:      currentTripResult.date
     };
-    savedRoutes.unshift(newSaved);
-    persistSavedRoutes();
-    updateSavedCountBadge();
-    showToast(`Saved trip "${newSaved.title}"!`, 'success');
+
+    // If currently in Guest Mode, prompt for account sign in / register
+    if (!currentUser) {
+        pendingTripToSave = tripObj;
+        const promptModalEl = document.getElementById('guestSavePromptModal');
+        if (promptModalEl) {
+            new bootstrap.Modal(promptModalEl).show();
+        } else {
+            showToast('Saving trips requires an account. Please sign in or register.', 'warning');
+            showAuthGateway('signin');
+        }
+        return;
+    }
+
+    // Authenticated user
+    saveTripData(tripObj);
 });
 
 // ── Open Saved Trips Modal ────────────────────────────────────────
 window.openSavedRoutesModal = () => {
     const listEl = document.getElementById('saved-routes-list-modal');
     if (!listEl) return;
+
+    if (!currentUser) {
+        listEl.innerHTML = `
+            <div class="text-center py-4">
+                <div class="mb-3">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 60px; height: 60px; font-size: 26px;">
+                        <i class="fas fa-bookmark"></i>
+                    </span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Guest Mode Active</h5>
+                <p class="text-muted small mb-4" style="max-width: 440px; margin: 0 auto;">
+                    You are exploring in <strong>Guest Mode</strong>. Saved trips are stored securely in user accounts so you can access and load them across sessions.
+                </p>
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-primary px-3 py-2 fw-semibold" onclick="bootstrap.Modal.getInstance(document.getElementById('savedRoutesModal'))?.hide(); showAuthGateway('signin');">
+                        <i class="fas fa-sign-in-alt me-1"></i> Sign In / Create Account
+                    </button>
+                </div>
+            </div>`;
+        new bootstrap.Modal(document.getElementById('savedRoutesModal')).show();
+        return;
+    }
 
     listEl.innerHTML = savedRoutes.length === 0
         ? `<p class="text-muted text-center my-4"><i class="fas fa-bookmark fa-2x mb-2 text-secondary opacity-50 d-block"></i>No saved trips yet. Calculate a route and click "Save Trip"!</p>`

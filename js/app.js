@@ -13,13 +13,14 @@ async function initApp() {
     renderFuelRatesTable();
     updateFuelSimulator();
 
-    // 3. Always require login on opening the site (no auto-open without login)
-    currentUser = null;
-    localStorage.removeItem('routeWiseUser');
-    const authGateway = document.getElementById('auth-gateway-view');
-    const mainApp     = document.getElementById('main-app-wrapper');
-    if (authGateway) authGateway.style.display = 'flex';
-    if (mainApp)     mainApp.style.display     = 'none';
+    // 3. Session restore or initialize Guest Mode
+    const storedUser = typeof getStoredSessionUser === 'function' ? getStoredSessionUser() : null;
+    if (storedUser) {
+        currentUser = storedUser;
+        unlockApplication();
+    } else {
+        enterGuestMode();
+    }
 }
 
 initApp();

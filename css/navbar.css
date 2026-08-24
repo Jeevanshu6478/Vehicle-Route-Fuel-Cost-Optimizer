@@ -1,145 +1,223 @@
 /*
    ================================================================
-   RouteWise — Header, Rates Ticker, User Badge, Footer
+   RouteWise — Header, Navigation Bar, User Badge, Footer
+   Clean, Modern Dark Glass Navbar
    ================================================================
 */
 
-/* ── Header ───────────────────────────────────────────────────── */
+/* ── Header & Navbar ──────────────────────────────────────────── */
 .custom-navbar {
-    background: var(--surface) !important;
-    backdrop-filter: none;
-    border-bottom: 1px solid var(--line);
+    background: rgba(15, 23, 42, 0.94) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
     z-index: 1050;
     padding: 0;
-    min-height: 62px;
+    min-height: 68px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
-.custom-navbar > .container { min-height: 62px; }
+.custom-navbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb 0%, #06b6d4 33%, #10b981 66%, #f59e0b 100%);
+    z-index: 1051;
+}
+.custom-navbar > .container { 
+    min-height: 68px; 
+    display: flex;
+    align-items: center;
+}
 
+/* ── Brand Logo ────────────────────────────────────────────────── */
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 9px;
-    color: var(--ink) !important;
-    font-size: 16.5px;
-    font-weight: 700;
+    gap: 12px;
+    color: #ffffff !important;
+    font-size: 20px;
+    font-weight: 800;
     letter-spacing: -0.02em;
     white-space: nowrap;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    padding: 0;
+    margin-right: 24px;
 }
-.navbar-brand .text-success { color: var(--green) !important; }
+.navbar-brand:hover {
+    transform: scale(1.02);
+}
+.brand-title-text {
+    font-weight: 800;
+    color: #ffffff;
+}
+.brand-highlight {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-/* Brand mark: a solid ink square, not a gradient chip. */
+/* Brand mark icon */
 .brand-icon-wrapper {
-    width: 27px;
-    height: 27px;
+    width: 36px;
+    height: 36px;
     display: inline-grid;
     place-items: center;
-    background: var(--ink);
-    border-radius: 0;
-    box-shadow: none;
-    color: var(--surface);
-    font-size: 13px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 16px;
     flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.navbar-brand:hover .brand-icon-wrapper {
+    transform: rotate(-6deg) scale(1.08);
 }
 
-.custom-navbar .navbar-nav { gap: 0; }
-.custom-navbar .navbar-collapse { align-items: center; gap: 18px; }
-.custom-navbar .navbar-collapse > .d-flex { gap: 12px !important; }
+/* ── Nav Links ─────────────────────────────────────────────────── */
+.custom-navbar .navbar-nav { 
+    gap: 4px; 
+}
+.custom-navbar .nav-item { 
+    display: flex; 
+    align-items: center;
+}
 
-.custom-navbar .nav-item { display: flex; }
-
-/* Nav links: quiet until active, then a 2px blue rule underneath. */
 .nav-link {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 6px;
-    height: 62px;
-    padding: 0 14px !important;
+    gap: 8px;
+    height: 68px;
+    padding: 0 16px !important;
     border: 0;
     border-radius: 0;
-    background: none;
-    color: var(--muted) !important;
-    font-size: 12px;
+    background: transparent;
+    color: #94a3b8 !important;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
-    transition: color 0.15s ease;
+    transition: all 0.2s ease;
 }
-.nav-link:hover { color: var(--ink) !important; background: none; }
-.nav-link.active { color: var(--ink) !important; background: none; border: 0; font-weight: 700; }
+.nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05);
+}
+.nav-link:hover i {
+    transform: translateY(-1px);
+}
+.nav-link.active {
+    color: #ffffff !important;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+}
 .nav-link.active::after {
     content: '';
     position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2px;
-    background: var(--blue);
+    left: 14px; right: 14px; bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #34d399);
+    border-radius: 3px 3px 0 0;
+    box-shadow: 0 -2px 10px rgba(52, 211, 153, 0.5);
 }
-/* Icons inherit link colour — no rainbow in the chrome. */
-.nav-link i,
-.nav-link i[class*="text-"] { color: inherit !important; font-size: 12px; opacity: 0.75; }
-.nav-link.active i { opacity: 1; }
 
-.navbar-toggler { padding: 6px 8px; border-radius: 0; }
-.navbar-toggler:focus { box-shadow: none; }
+/* Tab Icon Colors */
+.nav-icon-blue    { color: #60a5fa !important; font-size: 14px; transition: transform 0.2s ease; }
+.nav-icon-amber   { color: #fbbf24 !important; font-size: 14px; transition: transform 0.2s ease; }
+.nav-icon-emerald { color: #34d399 !important; font-size: 14px; transition: transform 0.2s ease; }
+.nav-icon-cyan    { color: #38bdf8 !important; font-size: 14px; transition: transform 0.2s ease; }
 
-/* ── Reference rates ticker ───────────────────────────────────── */
-.nav-fuel-ticker {
-    align-items: center;
-    gap: 8px;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    white-space: nowrap;
+.navbar-toggler {
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    filter: invert(1);
+    border-radius: 8px;
 }
-.nav-fuel-ticker strong { color: var(--ink); font-weight: 700; }
+.navbar-toggler:focus { 
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); 
+}
 
-.ticker-dot {
-    width: 6px;
-    height: 6px;
+/* ── Theme Mode Toggle Button ──────────────────────────────────── */
+.theme-toggle-btn {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: var(--green);
-    flex-shrink: 0;
-    animation: pulseGlow 2.4s ease-in-out infinite;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14.5px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #38bdf8;
+    transform: scale(1.08) rotate(15deg);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+}
+.theme-toggle-btn:focus {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
 }
 
-/* ── User badge ───────────────────────────────────────────────── */
+/* ── User & Guest Badge (Modern Dark Pill) ─────────────────────── */
 .user-profile-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    width: auto;
-    min-width: 0;
-    max-width: 190px;
-    padding: 5px 9px;
-    border: 1px solid var(--strong);
-    border-radius: 0;
-    background: var(--surface);
-    color: var(--ink);
-    font-size: 12px;
+    gap: 9px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(8px);
+    border-radius: 30px;
+    color: #ffffff;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.15s ease;
+    transition: all 0.2s ease;
 }
-.user-profile-badge:hover { background: var(--alt); border-color: var(--muted); }
-.user-profile-badge::after { margin-left: 4px !important; color: var(--muted); }
+.user-profile-badge:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: #38bdf8;
+    box-shadow: 0 3px 12px rgba(56, 189, 248, 0.2);
+}
+.user-profile-badge::after { 
+    margin-left: 4px !important; 
+    color: #94a3b8; 
+}
+
+.guest-badge-glow {
+    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(56, 189, 248, 0.1);
+}
+.guest-badge-glow:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.18);
+}
+
+.guest-avatar-bg {
+    background: linear-gradient(135deg, #0ea5e9, #6366f1) !important;
+}
 
 .user-avatar-mini {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     display: inline-grid;
     place-items: center;
     border-radius: 50%;
-    background: var(--blue-soft);
-    color: var(--blue);
+    background: linear-gradient(135deg, #2563eb, #10b981);
+    color: #ffffff;
     font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
     letter-spacing: 0;
     flex-shrink: 0;
 }
@@ -152,123 +230,121 @@
     text-transform: capitalize;
 }
 
-/* ── Legacy rates sub-bar ─────────────────────────────────────── */
-.live-rates-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    padding: 8px 0;
-}
-.fuel-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 8px;
-    border-radius: 0;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-}
-.fuel-pill-petrol { background: var(--amber-soft); color: var(--amber); border: 1px solid #f0d9bd; }
-.fuel-pill-diesel { background: var(--blue-soft);  color: var(--blue);  border: 1px solid #c7dbfe; }
-.fuel-pill-cng    { background: var(--green-soft); color: var(--green); border: 1px solid #a7f3d0; }
-.fuel-pill-petrol { background: rgba(225,29,72,0.15); color: #fb7185; border: 1px solid rgba(225,29,72,0.3); }
-.fuel-pill-diesel { background: rgba(2,132,199,0.15);  color: #38bdf8; border: 1px solid rgba(2,132,199,0.3); }
-.fuel-pill-cng    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
-
-/* ── Footer ───────────────────────────────────────────────────── */
+/* ── Rich Dark Footer ─────────────────────────────────────────── */
 .custom-footer {
     margin-top: auto;
-    padding: 44px 0 20px;
-    background: var(--surface);
-    border-top: 1px solid var(--strong);
-    color: var(--muted);
-    font-size: 12.5px;
+    padding: 56px 0 28px;
+    background: linear-gradient(180deg, #0b1120 0%, #030712 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    font-size: 13.5px;
+    position: relative;
 }
-.custom-footer .navbar-brand { font-size: 15px; }
+.custom-footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2563eb, #10b981, #f59e0b);
+}
+.custom-footer .navbar-brand { font-size: 17px; }
 
 .footer-heading {
-    margin-bottom: 14px;
-    color: var(--ink);
-    font-size: 11px;
-    font-weight: 700;
+    margin-bottom: 16px;
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.09em;
 }
 
+.footer-nav-list li { margin-bottom: 8px; }
 .footer-link {
-    display: inline-block;
-    margin-bottom: 6px;
-    color: var(--muted);
-    font-size: 12.5px;
+    display: inline-flex;
+    align-items: center;
+    color: #94a3b8;
+    font-size: 13.5px;
+    font-weight: 500;
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: all 0.2s ease;
 }
-.footer-link:hover { color: var(--blue); transform: none; }
+.footer-link:hover {
+    color: #38bdf8;
+    transform: translateX(4px);
+}
 
-.footer-note { color: var(--muted); font-size: 12.5px; line-height: 1.65; }
+.footer-note {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.65;
+}
 
+/* Footer Rate Economics Card */
+.footer-rate-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 16px;
+}
 .footer-rate-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--muted);
+    font-size: 12.5px;
+    color: #cbd5e1;
 }
-.footer-rate-row strong { color: var(--ink); font-weight: 700; }
+.footer-rate-row:last-child { margin-bottom: 0; }
+.rate-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    margin-right: 6px;
+}
+.rate-petrol strong { color: #fb7185; }
+.rate-diesel strong { color: #38bdf8; }
+.rate-cng strong    { color: #34d399; }
+.text-emerald { color: #34d399 !important; }
 
-.footer-status {
-    padding: 12px;
-    background: var(--alt);
-    border: 1px solid var(--line);
-    font-size: 11.5px;
+/* Footer Status Card */
+.footer-status-card {
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .footer-status-line {
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin-bottom: 7px;
-    color: var(--green);
-    font-size: 10px;
-    font-weight: 700;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #34d399;
+    font-size: 11px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.07em;
 }
-.footer-status-meta { color: var(--muted); font-family: var(--mono); font-size: 10px; line-height: 1.7; }
-
-.social-icon-btn {
-    width: 30px;
-    height: 30px;
-    display: inline-grid;
-    place-items: center;
-    border: 1px solid var(--strong);
-    border-radius: 0;
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 13px;
-    text-decoration: none;
-    transition: var(--transition-fast);
+.footer-status-meta {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.8;
 }
-.social-icon-btn:hover { background: var(--ink); border-color: var(--ink); color: #fff; transform: none; }
 
 .footer-bottom {
-    margin-top: 32px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 11.5px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    font-size: 12.5px;
 }
-.footer-bottom .text-muted { color: var(--muted) !important; }
+.footer-bottom .text-muted { color: #94a3b8 !important; }
 
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 991.98px) {
     .custom-navbar { padding-bottom: 8px; }
     .custom-navbar .navbar-collapse { gap: 0; }
     .custom-navbar .navbar-nav { gap: 0; padding-top: 6px; }
-    .nav-link { height: 38px; padding: 0 0 !important; }
+    .nav-link { height: 42px; padding: 0 8px !important; border-radius: 6px; }
     .nav-link.active::after { display: none; }
-    .nav-link.active { color: var(--blue) !important; }
+    .nav-link.active { color: var(--blue) !important; background: rgba(56, 189, 248, 0.12); }
     .custom-navbar .navbar-collapse > .d-flex { padding-top: 10px; }
 }
