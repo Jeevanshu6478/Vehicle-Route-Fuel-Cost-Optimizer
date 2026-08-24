@@ -1,6 +1,6 @@
 /*
    ================================================================
-   RouteWise — Auth Gateway: Portal Card, Sign In / Sign Up
+   RouteWise — Auth: Gateway Card, Sign In / Sign Up, Hero Side
    ================================================================
 */
 
@@ -24,8 +24,6 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-
-/* ── Left: value proposition on ink ───────────────────────────── */
 .auth-hero-side {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: #ffffff;
@@ -45,13 +43,8 @@
     border-radius: 50%;
 }
 
-
-/* ── Right: the form ──────────────────────────────────────────── */
 .auth-form-side { padding: 3rem 2.5rem; background: #ffffff; }
 
-
-
-/* Segmented switch replaces the pill toggle. */
 .auth-pill-switch {
     display: flex;
     background: #f1f5f9;
@@ -59,7 +52,6 @@
     border-radius: var(--radius-pill);
     margin-bottom: 1.8rem;
 }
-
 
 .auth-pill-btn {
     flex: 1;
@@ -72,7 +64,6 @@
     color: var(--text-muted);
     transition: var(--transition-fast);
 }
-
 .auth-pill-btn.active {
     background: #ffffff;
     color: var(--primary);
