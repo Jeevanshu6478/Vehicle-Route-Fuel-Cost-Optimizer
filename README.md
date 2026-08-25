@@ -47,10 +47,4 @@ Simply open `index.html` in any modern web browser or serve locally using any st
 
 ## Deployment Link
 https://vehicle-route-fuel-cost-optimizer.vercel.app/
-```bash
-# Example with Python:
-python -m http.server 8000
 
-# Example with Node.js:
-npx serve .
-```
