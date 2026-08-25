@@ -13,12 +13,17 @@ async function initApp() {
     renderFuelRatesTable();
     updateFuelSimulator();
 
-    // 3. Session restore: if user was logged in, skip auth screen
-    if (currentUser) {
-        unlockApplication();
+    // 3. Trigger initial car drive-in loading screen
+    const storedUser = typeof getStoredSessionUser === 'function' ? getStoredSessionUser() : null;
+    if (typeof triggerInitialLoadingSequence === 'function') {
+        triggerInitialLoadingSequence(storedUser);
     } else {
-        document.getElementById('auth-gateway-view').style.display  = 'flex';
-        document.getElementById('main-app-wrapper').style.display   = 'none';
+        if (storedUser) {
+            currentUser = storedUser;
+            unlockApplication();
+        } else {
+            enterGuestMode();
+        }
     }
 }
 

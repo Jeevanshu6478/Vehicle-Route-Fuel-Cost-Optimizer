@@ -1,6 +1,6 @@
 /**
  * RouteWise — utils.js
- * Shared helpers: toast notifications, tab router, footer year.
+ * Shared helpers: toast notifications, one-page scroll router, footer year.
  * Depends on: config.js (for DOM)
  */
 
@@ -26,10 +26,22 @@ function showToast(message, type = 'info') {
     }, 3500);
 }
 
-// ── SPA Tab Router ───────────────────────────────────────────────
-function switchTab(tabName) {
-    if (typeof currentUser === 'undefined' || !currentUser) return;
+// ── One-page scroll router ───────────────────────────────────────
+// All four sections render at once (see .tab-view-container in
+// base.css); navigating means scrolling to one rather than swapping
+// which one is visible. The 62px sticky-header offset is handled in
+// CSS via scroll-margin-top, so there are no magic offsets here.
+const RW_SECTIONS = ['optimizer', 'comparison', 'rates', 'about'];
 
+// Scroll-spy state. Declared before switchTab because switchTab sets
+// the lock when it starts a programmatic scroll.
+let spyLockedUntil = 0;
+let spyQueued = false;
+
+// Marks a section + its nav link as current. .active-tab no longer
+// drives visibility, but it's still toggled so the class keeps its
+// meaning for anything that reads it.
+function setActiveSection(tabName) {
     document.querySelectorAll('.tab-view-container').forEach(el => el.classList.remove('active-tab'));
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
 
@@ -38,8 +50,26 @@ function switchTab(tabName) {
 
     if (targetView) targetView.classList.add('active-tab');
     if (targetNav)  targetNav.classList.add('active');
+}
 
-    // Leaflet needs a size refresh when its tab becomes visible
+function switchTab(tabName) {
+    // Guard removed — guests can navigate sections
+
+    setActiveSection(tabName);
+
+    // Hold the scroll-spy off while the smooth scroll is in flight,
+    // otherwise the underline flickers through every section on the way.
+    spyLockedUntil = Date.now() + 900;
+
+    const targetView = document.getElementById(`view-${tabName}`);
+    if (targetView) {
+        // An explicit behavior:'smooth' overrides the CSS reduced-motion
+        // reset, so honour the preference here too.
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        targetView.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+
+    // Leaflet needs a size refresh when its box changes
     if (tabName === 'optimizer' && typeof map !== 'undefined' && map) {
         setTimeout(() => map.invalidateSize(), 200);
     }
@@ -50,13 +80,11 @@ function switchTab(tabName) {
         const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
         if (bsCollapse) bsCollapse.hide();
     }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 window.switchTab = switchTab;
 
 // Wire nav links
-['optimizer', 'comparison', 'rates', 'about'].forEach(name => {
+RW_SECTIONS.forEach(name => {
     document.getElementById(`nav-btn-${name}`)?.addEventListener('click', (e) => {
         e.preventDefault();
         window.location.hash = name;
@@ -67,8 +95,79 @@ window.switchTab = switchTab;
 // Hash-based deep linking
 window.addEventListener('hashchange', () => {
     const hash = window.location.hash.replace('#', '');
-    if (['optimizer', 'comparison', 'rates', 'about'].includes(hash)) switchTab(hash);
+    if (RW_SECTIONS.includes(hash)) switchTab(hash);
 });
+
+// ── Scroll-spy ───────────────────────────────────────────────────
+// The active nav underline tracks whichever section the reader is in.
+function updateActiveOnScroll() {
+    spyQueued = false;
+    if (Date.now() < spyLockedUntil) return;
+    // Guard removed — guests see the scroll-spy underline
+
+    let current = null;
+    for (const name of RW_SECTIONS) {
+        const el = document.getElementById(`view-${name}`);
+        if (!el) continue;
+        // A section becomes current once its top passes just under the
+        // sticky header (62px + slack).
+        if (el.getBoundingClientRect().top <= 90) current = name;
+    }
+
+    // The final section may be too short to ever cross the threshold,
+    // so pin it once the document is scrolled to the end.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        current = RW_SECTIONS[RW_SECTIONS.length - 1];
+    }
+
+    if (current) setActiveSection(current);
+}
+
+window.addEventListener('scroll', () => {
+    if (spyQueued) return;
+    spyQueued = true;
+    requestAnimationFrame(updateActiveOnScroll);
+}, { passive: true });
+
+// ── Dark / Light Theme Toggle ────────────────────────────────────
+function initTheme() {
+    const savedTheme = localStorage.getItem('routeWiseTheme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme, false);
+}
+
+function applyTheme(theme, notify = false) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('routeWiseTheme', theme);
+
+    const icon = document.getElementById('theme-toggle-icon');
+    const btn = document.getElementById('theme-toggle-btn');
+    if (icon) {
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun text-warning';
+            if (btn) btn.setAttribute('title', 'Switch to Light Mode');
+        } else {
+            icon.className = 'fas fa-moon text-light';
+            if (btn) btn.setAttribute('title', 'Switch to Dark Mode');
+        }
+    }
+
+    if (notify && typeof showToast === 'function') {
+        showToast(`${theme === 'dark' ? '🌙 Dark' : '☀️ Light'} Mode activated`, 'info');
+    }
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next, true);
+}
+window.toggleTheme = toggleTheme;
+window.applyTheme = applyTheme;
+
+// Initialize theme immediately
+initTheme();
 
 // Footer dynamic year
 const yearEl = document.getElementById('current-year');
