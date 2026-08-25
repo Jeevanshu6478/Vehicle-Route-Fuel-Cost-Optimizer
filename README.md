@@ -45,6 +45,8 @@ An algorithmic, user-friendly web application designed to optimize multi-stop ve
 ## 💻 How to Run
 Simply open `index.html` in any modern web browser or serve locally using any static web server:
 
+## Deployment Link
+https://vehicle-route-fuel-cost-optimizer.vercel.app/
 ```bash
 # Example with Python:
 python -m http.server 8000
